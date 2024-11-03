@@ -1,11 +1,11 @@
 ---
-slug: first-blog-post
-title: First Blog Post
-authors: [slorber, yangshun]
-tags: [hola, docusaurus]
+slug: 0.1-release
+title: First API Release
+authors: [johnf]
+tags: [paradisec, ldaca]
 ---
 
-Lorem ipsum dolor sit amet...
+TODO: Document the first release of our API
 
 <!-- truncate -->
 
