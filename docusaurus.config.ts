@@ -83,7 +83,7 @@ const config: Config = {
           items: [
             {
               label: 'API',
-              to: '/docs/api',
+              to: '/docs/intro',
             },
           ],
         },
