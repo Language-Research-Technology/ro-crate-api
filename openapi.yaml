@@ -1,0 +1,146 @@
+openapi: 3.1.0
+info:
+  title: RO-Crate API
+  summary: A comprehensive API for managing RO-Crate collections
+  description: |
+    ## Introduction
+    This API is documented in **OpenAPI format**.
+
+    FIXME: Document somethign here
+
+    ## Authentication
+
+    Two forms of authentication:
+      - Public
+      - OAuth2
+  contact:
+    name: Issues
+    url: https://github.com/johnf/ro-crate-api/issues
+  x-logo:
+    url: https://johnf.github.io/ro-crate-api/logo.webp
+    altText: RO-Crate API logo
+  license:
+    name: MIT
+    identifier: MIT
+  version: 0.0.1
+servers:
+  - url: https://data.ldaca.edu.au/api
+    description: LDaCA
+  - url: https://catalog.paradisec.org.au/api/v1/oni
+    description: PARADISEC
+externalDocs:
+  description: Find out more
+  url: https://johnf.github.com/ro-crate-api
+tags:
+  - name: objects
+    description: Collections and Objects
+    x-displayName: Objects
+  - name: object_model
+    x-displayName: The Object Model
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Object" exampleRef="#/components/examples/Order" />
+x-tagGroups:
+  - name: General
+    tags:
+      - objects
+  - name: Models
+    tags:
+      - object_model
+paths:
+  /objects:
+    get:
+      tags:
+        - objects
+      summary: Get objects
+      description: |
+        ### Object
+        Discover the objects in the collection and provides a summary
+        Provides summary of each object
+        operationId: findObjects
+      parameters:
+        - name: memberOf
+          in: query
+          description: Indicates when an object is a member of another object.
+          example: https://catalog.paradisec.org.au/repository/NT1
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of objects returned
+          example: 100
+          schema:
+            type: integert
+            format: int32
+            default: 100
+            minimum: 1
+        - name: offset
+          in: query
+          description: How many objects to skip
+          example: 100
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+        - name: sort
+          in: query
+          description: Order of results
+          example: id
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+        - name: order
+          in: query
+          description: Direction of sort
+          example: id
+          schema:
+            type: string
+            enum:
+              - id
+              - identifier
+            default: id
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Object"
+components:
+  schemas:
+    Object:
+      type: object
+      description: An object
+      required:
+        - crateId
+        - name
+        - description
+      properties:
+        crateId:
+          description: RO-Crate ID
+          example: https://catalog.paradisec.org.au/repository/LRB
+          allOf:
+            - $ref: "#/components/schemas/Id"
+        name:
+          description: Name of the object
+          type: string
+          example: Recordings of West Alor languages
+        description:
+          description: Description of the object
+          type: string
+          example: "A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv..."
+
+        parent:
+          allOf:
+            - $ref: "#/components/schemas/Object"
+        root:
+          allOf:
+            - $ref: "#/components/schemas/Object"
+    Id:
+      type: string
+      format: uri
+      readOnly: true

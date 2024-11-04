@@ -12,29 +12,17 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Easy to Use',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        FIXME
-      </>
-    ),
+    description: <>FIXME</>,
   },
   {
     title: 'Focus on What Matters',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        FIXME
-      </>
-    ),
+    description: <>FIXME</>,
   },
   {
     title: 'Powered by React',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        FIXME
-      </>
-    ),
+    description: <>FIXME</>,
   },
 ];
 

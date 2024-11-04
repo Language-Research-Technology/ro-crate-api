@@ -1,5 +1,6 @@
 import type * as Preset from '@docusaurus/preset-classic';
 import type { Config } from '@docusaurus/types';
+import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
 import { themes as prismThemes } from 'prism-react-renderer';
 
 const config: Config = {
@@ -30,7 +31,8 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/johnf/ro-crate-api/tree/main/source/',
+          editUrl: 'https://github.com/johnf/ro-crate-api/tree/main',
+          docItemComponent: '@theme/ApiItem',
         },
         blog: {
           showReadingTime: true,
@@ -38,7 +40,7 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          editUrl: 'https://github.com/johnf/ro-crate-api/tree/main/source/',
+          editUrl: 'https://github.com/johnf/ro-crate-api/tree/main',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -125,6 +127,26 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+  plugins: [
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: 'API',
+        docsPluginId: 'classic',
+        config: {
+          petstore: {
+            specPath: 'openapi.yaml',
+            outputDir: 'docs/api',
+            sidebarOptions: {
+              groupPathsBy: 'tag',
+            },
+          } satisfies OpenApiPlugin.Options,
+        },
+      },
+    ],
+  ],
+  themes: ['docusaurus-theme-openapi-docs'],
 };
 
 export default config;
