@@ -126,6 +126,13 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
+    languageTabs: [
+      { language: 'curl' },
+      { language: 'python' },
+      { language: 'javascript' },
+      { language: 'ruby' },
+      { language: 'php' },
+    ],
   } satisfies Preset.ThemeConfig,
 
   plugins: [
