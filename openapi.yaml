@@ -64,6 +64,16 @@ paths:
           example: https://catalog.paradisec.org.au/repository/NT1
           schema:
             type: string
+        - name: conformsTo
+          in: query
+          description: Restrict the types of object that are returned
+          example: https://w3id.org/ldac/profile#Collection
+          schema:
+            type: string
+            enum:
+              - https://w3id.org/ldac/profile#Collection
+              - https://w3id.org/ldac/profile#Object
+              - https://w3id.org/ldac/profile#Files
         - name: limit
           in: query
           description: Number of objects returned
@@ -87,10 +97,11 @@ paths:
           description: Order of results
           example: id
           schema:
-            type: integer
-            format: int32
-            default: 0
-            minimum: 0
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
         - name: order
           in: query
           description: Direction of sort
@@ -98,18 +109,29 @@ paths:
           schema:
             type: string
             enum:
-              - id
-              - identifier
-            default: id
+              - crateId
+              - name
+            default: crateId
       responses:
         "200":
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Object"
+                type: object
+                description: A list of objects
+                required:
+                  - total
+                  - objects
+                properties:
+                  total:
+                    description: Total number of objects before pagination
+                    type: int32
+                    example: 42
+                  objects:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Object"
 components:
   schemas:
     Object:
