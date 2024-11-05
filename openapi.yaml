@@ -69,42 +69,29 @@ paths:
           description: Restrict the types of object that are returned
           example: https://w3id.org/ldac/profile#Collection
           schema:
-            type: string
-            enum:
-              - https://w3id.org/ldac/profile#Collection
-              - https://w3id.org/ldac/profile#Object
-              - https://w3id.org/ldac/profile#Files
+            $ref: "#/components/schemas/ConformsTo"
         - name: limit
           in: query
-          description: Number of objects returned
+          description: Maximum number of objects to return.
           example: 100
           schema:
             type: integert
             format: int32
-            default: 100
             minimum: 1
+            maximum: 1000
+            default: 100
         - name: offset
           in: query
-          description: How many objects to skip
+          description: Number of items to skip before returning the results.
           example: 100
           schema:
             type: integer
             format: int32
-            default: 0
             minimum: 0
+            default: 0
         - name: sort
           in: query
-          description: Order of results
-          example: id
-          schema:
-            type: string
-            enum:
-              - asc
-              - desc
-            default: asc
-        - name: order
-          in: query
-          description: Direction of sort
+          description: Field to sort by
           example: id
           schema:
             type: string
@@ -112,6 +99,16 @@ paths:
               - crateId
               - name
             default: crateId
+        - name: order
+          in: query
+          description: |
+            Sort order:
+            * `asc` - Ascending, from A to Z
+            * `desc` - Descending, from Z to A
+          example: id
+          schema:
+            $ref: "#/components/schemas/Object"
+            default: asc
       responses:
         "200":
           description: successful operation
@@ -134,6 +131,17 @@ paths:
                       $ref: "#/components/schemas/Object"
 components:
   schemas:
+    Sort:
+      type: string
+      enum:
+        - asc
+        - desc
+    ConformsTo:
+      type: string
+      enum:
+        - https://w3id.org/ldac/profile#Collection
+        - https://w3id.org/ldac/profile#Object
+        - https://w3id.org/ldac/profile#Files
     Object:
       type: object
       description: An object
@@ -141,6 +149,7 @@ components:
         - crateId
         - name
         - description
+        - conformsTo
       properties:
         crateId:
           description: RO-Crate ID
@@ -155,14 +164,42 @@ components:
           description: Description of the object
           type: string
           example: "A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv..."
-
+        conformsTo:
+          description: Language Data Commons RO-Crate Profile
+          example: https://w3id.org/ldac/profile#Collection
+          allOf:
+            - $ref: "#/components/schemas/ConformsTo"
         parent:
           allOf:
-            - $ref: "#/components/schemas/Object"
+            - $ref: "#/components/schemas/Id"
         root:
           allOf:
-            - $ref: "#/components/schemas/Object"
+            - $ref: "#/components/schemas/Id"
     Id:
       type: string
       format: uri
       readOnly: true
+    # Error:
+    #   type: object
+    #   properties:
+    #     code:
+    #       type: integer
+    #     message:
+    #       type: string
+  # responses:
+    # 404NotFound: # Can be referenced as '#/components/responses/404NotFound'
+    #   description: The specified resource was not found.
+    # ImageResponse: # Can be referenced as '#/components/responses/ImageResponse'
+    #   description: An image.
+    #   content:
+    #     image/*:
+    #       schema:
+    #         type: string
+    #         format: binary
+    # GenericError: # Can be referenced as '#/components/responses/GenericError'
+    #   description: An error occurred.
+    #   content:
+    #     application/json:
+    #       schema:
+    #         $ref: "#/components/schemas/Error"
+
