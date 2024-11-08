@@ -6,13 +6,12 @@ info:
     ## Introduction
     This API is documented in **OpenAPI format**.
 
-    FIXME: Document somethign here
+    FIXME: Document something here
 
     ## Authentication
+    
+    FIXME: TBA
 
-    Two forms of authentication:
-      - Public
-      - OAuth2
   contact:
     name: Issues
     url: https://github.com/johnf/ro-crate-api/issues
@@ -51,12 +50,12 @@ paths:
     get:
       tags:
         - objects
-      summary: Get objects
+      summary: List objects
       description: |
         ### Object
         Discover the objects in the collection and provides a summary
         Provides summary of each object
-        operationId: findObjects
+      operationId: listObjects
       parameters:
         - name: memberOf
           in: query
@@ -69,7 +68,9 @@ paths:
           description: Restrict the types of object that are returned
           example: https://w3id.org/ldac/profile#Collection
           schema:
-            $ref: "#/components/schemas/ConformsTo"
+            type: array
+            items:
+              $ref: "#/components/schemas/ConformsTo"
         - name: limit
           in: query
           description: Maximum number of objects to return.
@@ -96,18 +97,20 @@ paths:
           schema:
             type: string
             enum:
-              - crateId
+              - id
               - name
-            default: crateId
+            default: id
         - name: order
           in: query
           description: |
             Sort order:
             * `asc` - Ascending, from A to Z
             * `desc` - Descending, from Z to A
-          example: id
+          example: asc
           schema:
-            $ref: "#/components/schemas/Object"
+            type: array
+            items:
+              $ref: "#/components/schemas/Order"
             default: asc
       responses:
         "200":
@@ -131,7 +134,17 @@ paths:
                       $ref: "#/components/schemas/Object"
 components:
   schemas:
-    Sort:
+    Id:
+      type: string
+      format: uri
+      readOnly: true
+    RecordType:
+      type: string
+      enum:
+        - DataSet
+        - RepositoryCollection
+        - RepositoryObject
+    Order:
       type: string
       enum:
         - asc
@@ -141,17 +154,16 @@ components:
       enum:
         - https://w3id.org/ldac/profile#Collection
         - https://w3id.org/ldac/profile#Object
-        - https://w3id.org/ldac/profile#Files
     Object:
       type: object
       description: An object
       required:
-        - crateId
+        - id
         - name
         - description
         - conformsTo
       properties:
-        crateId:
+        id:
           description: RO-Crate ID
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
@@ -163,22 +175,30 @@ components:
         description:
           description: Description of the object
           type: string
-          example: "A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv..."
+          example: A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv...
         conformsTo:
           description: Language Data Commons RO-Crate Profile
           example: https://w3id.org/ldac/profile#Collection
           allOf:
             - $ref: "#/components/schemas/ConformsTo"
+        recordType:
+          description: Language Data Commons RO-Crate Profile
+          example:
+            - DataSet
+            - RepositoryCollection
+          type: array
+          items:
+            - $ref: "#/components/schemas/RecordType"
         parent:
+          description: Parent of this object
+          example: https://catalog.paradisec.org.au/repository/NT1
           allOf:
             - $ref: "#/components/schemas/Id"
         root:
+          description: Parent of this object
+          example: https://catalog.paradisec.org.au/repository/NT1
           allOf:
             - $ref: "#/components/schemas/Id"
-    Id:
-      type: string
-      format: uri
-      readOnly: true
     # Error:
     #   type: object
     #   properties:

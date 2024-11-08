@@ -64,7 +64,7 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'apiSidebar',
+          sidebarId: 'sidebar',
           position: 'left',
           label: 'API',
         },
@@ -142,12 +142,16 @@ const config: Config = {
         id: 'API',
         docsPluginId: 'classic',
         config: {
-          petstore: {
+          api: {
             specPath: 'openapi.yaml',
             outputDir: 'docs/api',
             sidebarOptions: {
               groupPathsBy: 'tag',
+              categoryLinkSource: "tag",
             },
+            downloadUrl: "/ro-crate-api.yaml",
+            showSchemas: true,
+            showExtensions: true,
           } satisfies OpenApiPlugin.Options,
         },
       },
