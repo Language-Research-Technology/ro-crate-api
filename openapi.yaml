@@ -9,7 +9,7 @@ info:
     FIXME: Document something here
 
     ## Authentication
-    
+
     FIXME: TBA
 
   contact:
@@ -65,7 +65,7 @@ paths:
             type: string
         - name: conformsTo
           in: query
-          description: Restrict the types of object that are returned
+          description: Restrict the types of objects that are returned
           example: https://w3id.org/ldac/profile#Collection
           schema:
             type: array
@@ -99,6 +99,8 @@ paths:
             enum:
               - id
               - name
+              - createdAt
+              - updatedAt
             default: id
         - name: order
           in: query
@@ -162,10 +164,11 @@ components:
         - name
         - description
         - conformsTo
+        - recordType
       properties:
         id:
           description: RO-Crate ID
-          example: https://catalog.paradisec.org.au/repository/LRB
+          example: https://catalog.paradisec.org.au/repository/LRB/001
           allOf:
             - $ref: "#/components/schemas/Id"
         name:
@@ -188,17 +191,27 @@ components:
             - RepositoryCollection
           type: array
           items:
-            - $ref: "#/components/schemas/RecordType"
+            $ref: "#/components/schemas/RecordType"
         parent:
           description: Parent of this object
-          example: https://catalog.paradisec.org.au/repository/NT1
+          example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
         root:
           description: Parent of this object
-          example: https://catalog.paradisec.org.au/repository/NT1
+          example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
+        createdAt:
+          description: The date and time when the object was created
+          type: string
+          format: date-time
+          example: 2023-01-01T12:00:00Z
+        updatedAt:
+          description: The date and time when the object was last updated
+          type: string
+          format: date-time
+          example: 2023-01-02T12:00:00Z
     # Error:
     #   type: object
     #   properties:
