@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: Introduction
 ---
 
 # Research Object Crate API (RO-Crate-API)
