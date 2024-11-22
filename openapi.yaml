@@ -285,7 +285,6 @@ components:
             accessControl:
               description: The level of access control required to access this object
               example: Public
-              type: string
               allOf:
                 - $ref: "#/components/schemas/AccessControl"
             communicationMode:
