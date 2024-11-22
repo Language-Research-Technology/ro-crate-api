@@ -287,13 +287,13 @@ components:
               example: Public
               type: string
               allOf:
-                $ref: "#/components/schemas/AccessControl"
+                - $ref: "#/components/schemas/AccessControl"
             communicationMode:
               description: The modes of communication in the tree
               example: Song
               type: array
               items:
-                type: "#/components/schemas/CommunicationMode"
+                $ref: "#/components/schemas/CommunicationMode"
             mediaType:
               description: The mediatypes of files in the tree
               example:
