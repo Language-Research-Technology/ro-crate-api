@@ -241,7 +241,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RecordType"
-        parent:
+        memberOf:
           description: Parent of this object
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
