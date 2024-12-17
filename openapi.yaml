@@ -161,6 +161,35 @@ paths:
               schema:
                 type: object
                 description: RO-Crate JSON as defined at https://www.researchobject.org/ro-crate/specification
+
+  /object/open:
+    get:
+      tags:
+        - objects
+      summary: Get a file
+      description: |
+        ### Object Open
+        Returns an object from path if path is not sent resolve its parts of the ro-crate.
+      operationId: getObjectOpen
+      parameters:
+        - name: id
+          in: query
+          description: RO-Crate ID
+          example: https://catalog.paradisec.org.au/repository/LRB/001
+          schema:
+            type: string
+            allOf:
+              - $ref: "#/components/schemas/Id"
+        - name: path
+          in: query
+          description: path of the filename in the crate
+          example: https://catalog.paradisec.org.au/repository/LRB/001
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns a file
+
 components:
   schemas:
     Id:
