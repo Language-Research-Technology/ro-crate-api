@@ -31,41 +31,41 @@ externalDocs:
   description: Find out more
   url: https://johnf.github.com/ro-crate-api
 tags:
-  - name: objects
-    description: Collections and Objects
-    x-displayName: Objects
-  - name: object_model
-    x-displayName: The Object Model
+  - name: entities
+    description: Collections and Entities
+    x-displayName: Entities
+  - name: entity_model
+    x-displayName: The Entity Model
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/Object" exampleRef="#/components/examples/Order" />
+      <SchemaDefinition schemaRef="#/components/schemas/Entity" exampleRef="#/components/examples/Order" />
 x-tagGroups:
   - name: General
     tags:
-      - objects
+      - entities
   - name: Models
     tags:
-      - object_model
+      - entity_model
 paths:
-  /objects:
+  /entities:
     get:
       tags:
-        - objects
-      summary: List objects
+        - entities
+      summary: List entities
       description: |
-        ### Object
-        Discover the objects in the collection and provides a summary
-        Provides summary of each object
-      operationId: listObjects
+        ### Entity
+        Discover the entities in the collection and provides a summary
+        Provides summary of each entity
+      operationId: listEntities
       parameters:
         - name: memberOf
           in: query
-          description: Indicates when an object is a member of another object.
+          description: Indicates when an entity is a member of another entity.
           example: https://catalog.paradisec.org.au/repository/NT1
           schema:
             type: string
         - name: conformsTo
           in: query
-          description: Restrict the types of objects that are returned
+          description: Restrict the types of entities that are returned
           example: https://w3id.org/ldac/profile#Collection
           schema:
             type: array
@@ -73,7 +73,7 @@ paths:
               $ref: "#/components/schemas/ConformsTo"
         - name: limit
           in: query
-          description: Maximum number of objects to return.
+          description: Maximum number of entities to return.
           example: 100
           schema:
             type: integer
@@ -121,29 +121,29 @@ paths:
             application/json:
               schema:
                 type: object
-                description: A list of objects
+                description: A list of entities
                 required:
                   - total
-                  - objects
+                  - entities
                 properties:
                   total:
-                    description: Total number of objects before pagination
+                    description: Total number of entities before pagination
                     type: int32
                     example: 42
-                  objects:
+                  entities:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Object"
+                      $ref: "#/components/schemas/Entity"
 
-  /object/meta:
+  /entity/meta:
     get:
       tags:
-        - objects
-      summary: Get RO-Crate for an object
+        - entities
+      summary: Get RO-Crate for an entity
       description: |
-        ### Object Meta
+        ### Entity Meta
         Get an RO-Crate Metadata Document with either IDs translated to api compatible or not
-      operationId: getObjectMeta
+      operationId: getEntityMeta
       parameters:
         - name: id
           in: query
@@ -162,15 +162,15 @@ paths:
                 type: object
                 description: RO-Crate JSON as defined at https://www.researchobject.org/ro-crate/specification
 
-  /object/open:
+  /entity/open:
     get:
       tags:
-        - objects
+        - entities
       summary: Get a file
       description: |
-        ### Object Open
-        Returns an object from path if path is not sent resolve its parts of the ro-crate.
-      operationId: getObjectOpen
+        ### Entity Open
+        Returns an entity from path if path is not sent resolve its parts of the ro-crate.
+      operationId: getEntityOpen
       parameters:
         - name: id
           in: query
@@ -232,9 +232,9 @@ components:
       enum:
         - https://w3id.org/ldac/profile#Collection
         - https://w3id.org/ldac/profile#Object
-    Object:
+    Entity:
       type: object
-      description: An object
+      description: An entity
       required:
         - id
         - name
@@ -248,12 +248,12 @@ components:
           allOf:
             - $ref: "#/components/schemas/Id"
         name:
-          description: Name of the object
+          description: Name of the entity
           type: string
           example: Recordings of West Alor languages
           maxLength: 64
         description:
-          description: Description of the object
+          description: Description of the entity
           type: string
           example: A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv...
           maxLength: 256
@@ -271,40 +271,40 @@ components:
           items:
             $ref: "#/components/schemas/RecordType"
         memberOf:
-          description: Parent of this object
+          description: Parent of this entity
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
         root:
-          description: Root of the tree for this object
+          description: Root of the tree for this entity
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
         createdAt:
-          description: The date and time when the object was created
+          description: The date and time when the entity was created
           type: string
           format: date-time
           example: 2023-01-01T12:00:00Z
         updatedAt:
-          description: The date and time when the object was last updated
+          description: The date and time when the entity was last updated
           type: string
           format: date-time
           example: 2023-01-02T12:00:00Z
         extra:
           type: object
-          description: Extra information about the object. All fields are optional. We define some semi-standardised fields here. You can add anything extra here you like
+          description: Extra information about the entity. All fields are optional. We define some semi-standardised fields here. You can add anything extra here you like
           properties:
             collectionCount:
               type: integer
-              description: The number of collections in the subtree of this object
+              description: The number of collections in the subtree of this entity
             subCcollectionCount:
               type: integer
-              description: The number of sub-collections in the subtree of this object
+              description: The number of sub-collections in the subtree of this entity
             fileCount:
               type: integer
-              description: The number of files in the subtree of this object
+              description: The number of files in the subtree of this entity
             language:
-              description: All the languages contained in the sub-tree of objects
+              description: All the languages contained in the sub-tree of entities
               type: array
               items:
                 type: string
@@ -312,7 +312,7 @@ components:
                 - English
                 - Italian
             accessControl:
-              description: The level of access control required to access this object
+              description: The level of access control required to access this entity
               example: Public
               allOf:
                 - $ref: "#/components/schemas/AccessControl"
