@@ -135,7 +135,7 @@ paths:
                     items:
                       $ref: "#/components/schemas/Entity"
 
-  /entity/meta:
+  /entity/{id}:
     get:
       tags:
         - entities
@@ -143,10 +143,11 @@ paths:
       description: |
         ### Entity Meta
         Get an RO-Crate Metadata Document with either IDs translated to api compatible or not
-      operationId: getEntityMeta
+      operationId: getEntity
       parameters:
         - name: id
-          in: query
+          in: path
+          required: true
           description: RO-Crate ID
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
@@ -162,7 +163,7 @@ paths:
                 type: object
                 description: RO-Crate JSON as defined at https://www.researchobject.org/ro-crate/specification
 
-  /entity/open:
+  /entity/{id}/file/{fileId}:
     get:
       tags:
         - entities
@@ -173,17 +174,35 @@ paths:
       operationId: getEntityOpen
       parameters:
         - name: id
-          in: query
+          in: path
+          required: true
           description: RO-Crate ID
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
             type: string
             allOf:
               - $ref: "#/components/schemas/Id"
-        - name: path
-          in: query
+        - name: fileId
+          in: path
+          required: true
           description: path of the filename in the crate
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: filename.wav
+          schema:
+            type: string
+        - name: disposition
+          in: query
+          description: The disposition header to set
+          example: inline
+          schema:
+            type: string
+            enum:
+              - inline
+              - attachment
+            default: inline
+        - name: filename
+          in: query
+          description: When disposition is attachment, what to name the file
+          example: foo.wav
           schema:
             type: string
       responses:
