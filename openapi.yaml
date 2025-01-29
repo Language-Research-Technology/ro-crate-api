@@ -34,6 +34,9 @@ tags:
   - name: entities
     description: Collections and Entities
     x-displayName: Entities
+  - name: search
+    description: Search
+    x-displayName: Search
   - name: entity_model
     x-displayName: The Entity Model
     description: |
@@ -42,6 +45,7 @@ x-tagGroups:
   - name: General
     tags:
       - entities
+      - search
   - name: Models
     tags:
       - entity_model
@@ -66,7 +70,7 @@ paths:
         - name: conformsTo
           in: query
           description: Restrict the types of entities that are returned
-          example: https://w3id.org/ldac/profile#Collection
+          example: ["https://w3id.org/ldac/profile#Collection"]
           schema:
             type: array
             items:
@@ -108,12 +112,12 @@ paths:
             Sort order:
             * `asc` - Ascending, from A to Z
             * `desc` - Descending, from Z to A
-          example: asc
+          example: ["asc"]
           schema:
             type: array
             items:
               $ref: "#/components/schemas/Order"
-            default: asc
+            default: ["asc"]
       responses:
         "200":
           description: successful operation
@@ -128,7 +132,7 @@ paths:
                 properties:
                   total:
                     description: Total number of entities before pagination
-                    type: int32
+                    type: integer
                     example: 42
                   entities:
                     type: array
@@ -208,6 +212,145 @@ paths:
       responses:
         "200":
           description: Returns a file
+
+  /search:
+    post:
+      tags:
+        - search
+      summary: Search for RO-Crate entities
+      description: |
+        ### Search
+        Search the entities in the collection and provides a summary
+        Provides summary of each entity
+      operationId: search-entities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                searchType:
+                  type: string
+                  enum:
+                    - basic
+                    - advanced
+                  default: basic
+                query:
+                  type: string
+                  description: |
+                    When searchType is basic this is a free text field of text to search for
+
+                    When searchType is advanced this is boolean search field
+                    Examples:
+                      name: John
+                      name: John AND description: Engineer
+                      name: John AND (description: Engineer OR description: developer)
+
+                    NOTE: It is expected that most implementors of this API will use OpenSearch and the above is the OpenSearch API
+                    This is the most basic that MUST be implemented.
+                    API implementors can support full OpenSearch queries if they wish, refer to your implementations documentation for details
+                filters:
+                  type: object
+                  description: keyword filters
+                  additionalProperties:
+                    name: keyword
+                    type: array
+                    items:
+                      type: string
+                  example:
+                    {
+                      "inLanguage": ["English", "Japanese"],
+                      "mediaType": ["image/png"],
+                    }
+                limit:
+                  description: Maximum number of entities to return.
+                  example: 100
+                  schema:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                    maximum: 1000
+                    default: 100
+                offset:
+                  description: Number of items to skip before returning the results.
+                  example: 100
+                  schema:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                    default: 0
+                sort:
+                  description: Field to sort by
+                  example: id
+                  schema:
+                    type: string
+                    enum:
+                      - id
+                      - name
+                      - createdAt
+                      - updatedAt
+                    default: id
+                order:
+                  description: |
+                    Sort order:
+                    * `asc` - Ascending, from A to Z
+                    * `desc` - Descending, from Z to A
+                  example: ["asc"]
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+                    default: ["asc"]
+
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A list of entities
+                required:
+                  - total
+                  - searchTime
+                  - entities
+                properties:
+                  total:
+                    description: Total number of entities before pagination
+                    type: integer
+                    example: 42
+                  searchTime:
+                    description: The search time in milliseconds
+                    type: number
+                    example: 42.34
+                  entities:
+                    allOf:
+                      - $ref: "#/components/schemas/Entity"
+                      - $ref: "#/components/schemas/SearchEntity"
+                  facets:
+                    type: object
+                    additionalProperties:
+                      name: keyword
+                      type: array
+                      items:
+                        type: object
+                        items:
+                          name:
+                            type: string
+                            description: The facet value
+                          count:
+                            type: integer
+                            description: The number of results for this value
+                    example:
+                      {
+                        "inLanguage":
+                          [
+                            { "name": "English", "count": 100 },
+                            { "name": "Japanese", "count": 5 },
+                          ],
+                      }
 
 components:
   schemas:
@@ -316,6 +459,9 @@ components:
             collectionCount:
               type: integer
               description: The number of collections in the subtree of this entity
+            objectCount:
+              type: integer
+              description: The number of objects in the subtree of this entity
             subCcollectionCount:
               type: integer
               description: The number of sub-collections in the subtree of this entity
@@ -337,7 +483,7 @@ components:
                 - $ref: "#/components/schemas/AccessControl"
             communicationMode:
               description: The modes of communication in the tree
-              example: Song
+              example: ["Song"]
               type: array
               items:
                 $ref: "#/components/schemas/CommunicationMode"
@@ -349,6 +495,20 @@ components:
               type: array
               items:
                 type: string
+    SearchEntity:
+      properties:
+        searchExtra:
+          type: object
+          description: Extra search information about the entity
+          properties:
+            score:
+              type: number
+              description: The search score
+            highlight:
+              type: array
+              items:
+                type: string
+              description: Text fields to highlight from the search
 
     # Error:
     #   type: object
@@ -358,19 +518,18 @@ components:
     #     message:
     #       type: string
   # responses:
-    # 404NotFound: # Can be referenced as '#/components/responses/404NotFound'
-    #   description: The specified resource was not found.
-    # ImageResponse: # Can be referenced as '#/components/responses/ImageResponse'
-    #   description: An image.
-    #   content:
-    #     image/*:
-    #       schema:
-    #         type: string
-    #         format: binary
-    # GenericError: # Can be referenced as '#/components/responses/GenericError'
-    #   description: An error occurred.
-    #   content:
-    #     application/json:
-    #       schema:
-    #         $ref: "#/components/schemas/Error"
-
+  # 404NotFound: # Can be referenced as '#/components/responses/404NotFound'
+  #   description: The specified resource was not found.
+  # ImageResponse: # Can be referenced as '#/components/responses/ImageResponse'
+  #   description: An image.
+  #   content:
+  #     image/*:
+  #       schema:
+  #         type: string
+  #         format: binary
+  # GenericError: # Can be referenced as '#/components/responses/GenericError'
+  #   description: An error occurred.
+  #   content:
+  #     application/json:
+  #       schema:
+  #         $ref: "#/components/schemas/Error"
