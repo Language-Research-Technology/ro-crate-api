@@ -4,13 +4,12 @@ info:
   summary: A comprehensive API for managing RO-Crate collections
   description: |
     ## Introduction
-    This API is documented in **OpenAPI format**.
+    This API offers a standardized approach to interacting with RO-Crate metadata in repositories that host diverse media archives, such as PARADISEC. Building on the RO-Crate specification, the endpoints here facilitate the creation, retrieval, and management of digital collections, ensuring metadata is compliant and discoverable.
 
-    FIXME: Document something here
+    RO-Crate (Research Object Crate) is a lightweight approach to packaging research data with machine-readable metadata. By using this API, developers and archives can programmatically interface with RO-Crate-compliant collections, enabling consistent handling of metadata and files.
 
     ## Authentication
-
-    FIXME: TBA
+    This API might require various authentication methods depending on the archive’s security needs. Implementations could use tokens, OAuth 2.0, or other strategies. Details will depend on each specific deployment’s requirements. For example, PARADISEC may implement specific token-based authentication or an existing user login system. Client applications must refer to the relevant documentation or contact the archive provider for detailed authentication steps.
 
   contact:
     name: Issues
@@ -28,19 +27,20 @@ servers:
   - url: https://catalog.paradisec.org.au/api/v1/oni
     description: PARADISEC
 externalDocs:
-  description: Find out more
+  description: Find out more about RO-Crate
   url: https://johnf.github.com/ro-crate-api
 tags:
   - name: entities
-    description: Collections and Entities
+    description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.
     x-displayName: Entities
   - name: search
-    description: Search
+    description: Endpoints to perform searches on archived media and metadata.
     x-displayName: Search
   - name: entity_model
     x-displayName: The Entity Model
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Entity" exampleRef="#/components/examples/Order" />
+      This section details how the Entity schema is structured, including properties like ID, name, and conforming profile information.
 x-tagGroups:
   - name: General
     tags:
@@ -57,19 +57,18 @@ paths:
       summary: List entities
       description: |
         ### Entity
-        Discover the entities in the collection and provides a summary
-        Provides summary of each entity
+        Retrieve and list the entities in a collection. This endpoint returns key metadata describing each entity (e.g., ID, name, description). The response can be filtered, paginated, and sorted, allowing clients to navigate large archives efficiently.
       operationId: listEntities
       parameters:
         - name: memberOf
           in: query
-          description: Indicates when an entity is a member of another entity.
+          description: Indicates that an entity is a member of another entity (e.g., a sub-collection). Use this parameter to filter results to only entities that belong to a certain parent.
           example: https://catalog.paradisec.org.au/repository/NT1
           schema:
             type: string
         - name: conformsTo
           in: query
-          description: Restrict the types of entities that are returned
+          description: Restrict the types of entities that are returned by specifying which RO-Crate profiles they conform to.
           example: ["https://w3id.org/ldac/profile#Collection"]
           schema:
             type: array
@@ -87,7 +86,7 @@ paths:
             default: 100
         - name: offset
           in: query
-          description: Number of items to skip before returning the results.
+          description: Number of items to skip before returning the results, useful for pagination.
           example: 100
           schema:
             type: integer
@@ -96,7 +95,7 @@ paths:
             default: 0
         - name: sort
           in: query
-          description: Field to sort by
+          description: Field to sort by, such as `id` or `createdAt`.
           example: id
           schema:
             type: string
@@ -125,13 +124,13 @@ paths:
             application/json:
               schema:
                 type: object
-                description: A list of entities
+                description: A list of entities based on the provided filters.
                 required:
                   - total
                   - entities
                 properties:
                   total:
-                    description: Total number of entities before pagination
+                    description: Total number of entities (before pagination) that match the query.
                     type: integer
                     example: 42
                   entities:
@@ -146,13 +145,13 @@ paths:
       summary: Get RO-Crate for an entity
       description: |
         ### Entity Meta
-        Get an RO-Crate Metadata Document with either IDs translated to api compatible or not
+        Retrieve the RO-Crate metadata document for a specific entity. This can include references to sub-entities, attached files, or other related metadata. Depending on the repository, IDs might be translated or fully qualified to ensure resolvable identifiers.
       operationId: getEntity
       parameters:
         - name: id
           in: path
           required: true
-          description: RO-Crate ID
+          description: The unique RO-Crate ID representing a specific entity in the repository.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
             type: string
@@ -174,13 +173,13 @@ paths:
       summary: Get a file
       description: |
         ### Entity Open
-        Returns an entity from path if path is not sent resolve its parts of the ro-crate.
+        Retrieve an individual file that is part of a given entity’s RO-Crate. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition.
       operationId: getEntityOpen
       parameters:
         - name: id
           in: path
           required: true
-          description: RO-Crate ID
+          description: The RO-Crate entity ID to which the file belongs.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
             type: string
@@ -189,13 +188,13 @@ paths:
         - name: fileId
           in: path
           required: true
-          description: path of the filename in the crate
+          description: The path or identifier of the file within the entity’s crate.
           example: filename.wav
           schema:
             type: string
         - name: disposition
           in: query
-          description: The disposition header to set
+          description: The HTTP Content-Disposition for how the file should be handled by the client.
           example: inline
           schema:
             type: string
@@ -205,13 +204,13 @@ paths:
             default: inline
         - name: filename
           in: query
-          description: When disposition is attachment, what to name the file
+          description: When the file is served as an attachment, the name to use when saving.
           example: foo.wav
           schema:
             type: string
       responses:
         "200":
-          description: Returns a file
+          description: Returns the requested file content.
 
   /search:
     post:
@@ -220,8 +219,7 @@ paths:
       summary: Search for RO-Crate entities
       description: |
         ### Search
-        Search the entities in the collection and provides a summary
-        Provides summary of each entity
+        Perform advanced or basic searches across the entire RO-Crate collection. This includes free text queries, as well as filters for specific fields such as `inLanguage` or `mediaType`. The search results can be paginated, sorted, and optionally returned alongside facet counts.
       operationId: search-entities
       requestBody:
         content:
@@ -237,12 +235,15 @@ paths:
                     - basic
                     - advanced
                   default: basic
+                  description: Specifies the search method to be used. `basic` searches across common fields, whereas `advanced` can handle Boolean queries or more complex logic.
                 query:
                   type: string
                   description: |
-                    When searchType is basic this is a free text field of text to search for
+                    he query string used in the search. Behavior depends on `searchType`. For `basic`, this can be free text. For `advanced`, Boolean operators can be used.
 
-                    When searchType is advanced this is boolean search field
+                    When searchType is `basic` this is a free text field of text to search.
+
+                    When searchType is `advanced` this is boolean search field
                     Examples:
                       name: John
                       name: John AND description: Engineer
@@ -253,7 +254,8 @@ paths:
                     API implementors can support full OpenSearch queries if they wish, refer to your implementations documentation for details
                 filters:
                   type: object
-                  description: keyword filters
+                  description: |
+                    A set of key-value pairs representing additional filters. Keys can be metadata fields (like `inLanguage` or `mediaType`), with each value being an array of acceptable values.
                   additionalProperties:
                     name: keyword
                     type: array
@@ -265,7 +267,7 @@ paths:
                       "mediaType": ["image/png"],
                     }
                 limit:
-                  description: Maximum number of entities to return.
+                  description: Maximum number of entities to return per page.
                   example: 100
                   schema:
                     type: integer
@@ -274,7 +276,7 @@ paths:
                     maximum: 1000
                     default: 100
                 offset:
-                  description: Number of items to skip before returning the results.
+                  description: Number of items to skip before returning the results, enabling paging.
                   example: 100
                   schema:
                     type: integer
@@ -282,7 +284,7 @@ paths:
                     minimum: 0
                     default: 0
                 sort:
-                  description: Field to sort by
+                  description: The field on which to sort results (e.g., `id`, `updatedAt`).
                   example: id
                   schema:
                     type: string
@@ -311,18 +313,18 @@ paths:
             application/json:
               schema:
                 type: object
-                description: A list of entities
+                description: A list of entities matching the query, plus optional facets.
                 required:
                   - total
                   - searchTime
                   - entities
                 properties:
                   total:
-                    description: Total number of entities before pagination
+                    description: Total number of entities (before pagination) matching the query.
                     type: integer
                     example: 42
                   searchTime:
-                    description: The search time in milliseconds
+                    description: The search duration in milliseconds.
                     type: number
                     example: 42.34
                   entities:
@@ -331,18 +333,19 @@ paths:
                       - $ref: "#/components/schemas/SearchEntity"
                   facets:
                     type: object
+                    description: Contains facet counts for the search. Keys are facet fields, and values are arrays of objects indicating the facet name and count.
                     additionalProperties:
                       name: keyword
                       type: array
                       items:
                         type: object
-                        items:
+                        properties:
                           name:
                             type: string
-                            description: The facet value
+                            description: The facet value or label.
                           count:
                             type: integer
-                            description: The number of results for this value
+                            description: Number of results that match this facet value.
                     example:
                       {
                         "inLanguage":
@@ -358,19 +361,22 @@ components:
       type: string
       format: uri
       readOnly: true
+      description: A URI-based identifier, used to reference the entity or file in the RO-Crate. This ensures global uniqueness and enables cross-linking of entities.
     RecordType:
       type: string
       enum:
         - DataSet
         - RepositoryCollection
         - RepositoryObject
+      description: An enumerated type describing the nature of the entity, such as dataset or specific repository objects.
     Order:
       type: string
       enum:
         - asc
         - desc
+      description: Used to specify the order in sorting results.
     AccessControl:
-      description: As defined at https://w3id.org/ldac/terms#authorizationWorkflow
+      description: Access control level as defined at https://w3id.org/ldac/terms#authorizationWorkflow. Determines how an entity may be accessed by users.
       type: string
       enum:
         - Public
@@ -380,7 +386,7 @@ components:
         - SelfAuthorization
         - AccessControlList
     CommunicationMode:
-      description: As defined at https://w3id.org/ldac/terms#communicationMode
+      description: Communication modes as defined at https://w3id.org/ldac/terms#communicationMode. These are typically relevant for language and communication data.
       type: string
       enum:
         - Gesture
@@ -394,9 +400,10 @@ components:
       enum:
         - https://w3id.org/ldac/profile#Collection
         - https://w3id.org/ldac/profile#Object
+      description: Specifies the profile or schema that the entity conforms to, ensuring consistency in metadata structure.
     Entity:
       type: object
-      description: An entity
+      description: An entity represents a single collection or item within the repository, conforming to a specific RO-Crate profile.
       required:
         - id
         - name
@@ -405,27 +412,27 @@ components:
         - recordType
       properties:
         id:
-          description: RO-Crate ID
+          description: RO-Crate ID that uniquely identifies this entity.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           allOf:
             - $ref: "#/components/schemas/Id"
         name:
-          description: Name of the entity
+          description: Name of the entity.
           type: string
           example: Recordings of West Alor languages
           maxLength: 64
         description:
-          description: Description of the entity
+          description: A concise description of the entity’s contents or purpose.
           type: string
-          example: A compilation of three sub-corpora of Australian English, made up of sociolinguistic interv...
+          example: A compilation of recordings featuring various West Alor languages, curated for linguistic research.
           maxLength: 256
         conformsTo:
-          description: Language Data Commons RO-Crate Profile
+          description: The profile or schema the entity follows (e.g., an LDAC Collection).
           example: https://w3id.org/ldac/profile#Collection
           allOf:
             - $ref: "#/components/schemas/ConformsTo"
         recordType:
-          description: Language Data Commons RO-Crate Profile
+          description: The entity’s classification, indicating if it is a dataset, repository collection, or repository object.
           example:
             - DataSet
             - RepositoryCollection
@@ -433,43 +440,43 @@ components:
           items:
             $ref: "#/components/schemas/RecordType"
         memberOf:
-          description: Parent of this entity
+          description: An optional parent entity that this entity belongs to.
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
         root:
-          description: Root of the tree for this entity
+          description: The top-level collection or repository this entity is part of.
           example: https://catalog.paradisec.org.au/repository/LRB
           allOf:
             - $ref: "#/components/schemas/Id"
         createdAt:
-          description: The date and time when the entity was created
+          description: The ISO 8601 timestamp denoting when the entity was created.
           type: string
           format: date-time
           example: 2023-01-01T12:00:00Z
         updatedAt:
-          description: The date and time when the entity was last updated
+          description: The ISO 8601 timestamp denoting when the entity was last updated.
           type: string
           format: date-time
           example: 2023-01-02T12:00:00Z
         extra:
           type: object
-          description: Extra information about the entity. All fields are optional. We define some semi-standardised fields here. You can add anything extra here you like
+          description: Additional optional fields providing further descriptive metadata about the entity.
           properties:
             collectionCount:
               type: integer
-              description: The number of collections in the subtree of this entity
+              description: The total number of collections in the subtree of this entity, if applicable.
             objectCount:
               type: integer
-              description: The number of objects in the subtree of this entity
+              description: The total number of objects in the subtree of this entity.
             subCcollectionCount:
               type: integer
-              description: The number of sub-collections in the subtree of this entity
+              description: The number of nested sub-collections within this entity.
             fileCount:
               type: integer
-              description: The number of files in the subtree of this entity
+              description: The number of individual files attached to or within this entity’s structure.
             language:
-              description: All the languages contained in the sub-tree of entities
+              description: All languages contained in the sub-tree of entities. Useful for archives that store diverse linguistic data.
               type: array
               items:
                 type: string
@@ -477,18 +484,18 @@ components:
                 - English
                 - Italian
             accessControl:
-              description: The level of access control required to access this entity
+              description: The level of access control required to view or download this entity.
               example: Public
               allOf:
                 - $ref: "#/components/schemas/AccessControl"
             communicationMode:
-              description: The modes of communication in the tree
+              description: The modes of communication found in this entity’s data, such as speech, song, or sign.
               example: ["Song"]
               type: array
               items:
                 $ref: "#/components/schemas/CommunicationMode"
             mediaType:
-              description: The mediatypes of files in the tree
+              description: Media types (MIME types) of files within this entity.
               example:
                 - text/html
                 - text/csv
@@ -496,40 +503,17 @@ components:
               items:
                 type: string
     SearchEntity:
+      description: Contains additional information returned in search contexts.
       properties:
         searchExtra:
           type: object
-          description: Extra search information about the entity
+          description: Extra search-related metadata.
           properties:
             score:
               type: number
-              description: The search score
+              description: The relevance score for this entity, based on the search.
             highlight:
               type: array
               items:
                 type: string
-              description: Text fields to highlight from the search
-
-    # Error:
-    #   type: object
-    #   properties:
-    #     code:
-    #       type: integer
-    #     message:
-    #       type: string
-  # responses:
-  # 404NotFound: # Can be referenced as '#/components/responses/404NotFound'
-  #   description: The specified resource was not found.
-  # ImageResponse: # Can be referenced as '#/components/responses/ImageResponse'
-  #   description: An image.
-  #   content:
-  #     image/*:
-  #       schema:
-  #         type: string
-  #         format: binary
-  # GenericError: # Can be referenced as '#/components/responses/GenericError'
-  #   description: An error occurred.
-  #   content:
-  #     application/json:
-  #       schema:
-  #         $ref: "#/components/schemas/Error"
+              description: Selected text snippets from fields matching the query, which can be displayed to users for context.
