@@ -513,7 +513,10 @@ components:
               type: number
               description: The relevance score for this entity, based on the search.
             highlight:
-              type: array
-              items:
-                type: string
+              type: object
+              additionalProperties:
+                name: keyword
+                type: array
+                items:
+                  type: string
               description: Selected text snippets from fields matching the query, which can be displayed to users for context.
