@@ -8,8 +8,13 @@ info:
 
     RO-Crate (Research Object Crate) is a lightweight approach to packaging research data with machine-readable metadata. By using this API, developers and archives can programmatically interface with RO-Crate-compliant collections, enabling consistent handling of metadata and files.
 
+    This documentation covers what a valid implementation of this API should look like.
+
     ## Authentication
-    This API might require various authentication methods depending on the archive’s security needs. Implementations could use tokens, OAuth 2.0, or other strategies. Details will depend on each specific deployment’s requirements. For example, PARADISEC may implement specific token-based authentication or an existing user login system. Client applications must refer to the relevant documentation or contact the archive provider for detailed authentication steps.
+
+    It is expected that most archives will allow public access but there will typically be entities which are private or require authorization.
+
+    When authentication is required, an API implementation MUST implement OAuth2 and it is recommended that OpenID is also added for simpler configuration and discoverability.
 
   contact:
     name: Issues
@@ -49,6 +54,11 @@ x-tagGroups:
   - name: Models
     tags:
       - entity_model
+security:
+  - OAuth2:
+      - read
+  - OpenID:
+      - read
 paths:
   /entities:
     get:
@@ -119,7 +129,7 @@ paths:
             default: ["asc"]
       responses:
         "200":
-          description: successful operation
+          description: OK
           content:
             application/json:
               schema:
@@ -137,6 +147,10 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Entity"
+        "401":
+          description: Not authenticated
+        "403":
+          description: Access token does not have the required scope
 
   /entity/{id}:
     get:
@@ -159,7 +173,7 @@ paths:
               - $ref: "#/components/schemas/Id"
       responses:
         "200":
-          description: successful operation
+          description: OK
           content:
             application/json:
               schema:
@@ -308,7 +322,7 @@ paths:
 
       responses:
         "200":
-          description: successful operation
+          description: OK
           content:
             application/json:
               schema:
@@ -356,6 +370,22 @@ paths:
                       }
 
 components:
+  securitySchemes:
+    OpenID:
+      type: openIdConnect
+      description: It is recommended that API implementations implement OpenID to make discovery and implemntation easier.
+      openIdConnectUrl: /.well-known/openid-configuration
+
+    OAuth2:
+      type: oauth2
+      description: API implementations that contain data which needs to be protected MUST implement authorisation using OAuth 2
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            read: Grants read access
+
   schemas:
     Id:
       type: string
