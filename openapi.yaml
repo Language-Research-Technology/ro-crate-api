@@ -188,6 +188,7 @@ paths:
       description: |
         ### Entity Open
         Retrieve an individual file that is part of a given entity’s RO-Crate. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition.
+        The API can serve the file or redirect to the location of the file
       operationId: getEntityOpen
       parameters:
         - name: id
@@ -222,9 +223,17 @@ paths:
           example: foo.wav
           schema:
             type: string
+        - name: noRedirect
+          in: query
+          description: When the API would normally perfoem a 302 redirect it returns the location as json instead
+          example: foo.wav
+          schema:
+            type: string
       responses:
         "200":
-          description: Returns the requested file content.
+          description: 'Returns the requested file content or { "location": "http://location/of/file" }'
+        "302":
+          description: Redirects to file location
 
   /search:
     post:
