@@ -289,6 +289,41 @@ paths:
                       "inLanguage": ["English", "Japanese"],
                       "mediaType": ["image/png"],
                     }
+                boundingBox:
+                  type: object
+                  description: Will filter the results to entities that exist inside the bounding box. If a precision is supplied it will also return a geohash grid
+                  required:
+                    - topRight
+                    - bottomLeft
+                  properties:
+                    topRight:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lng:
+                          type: number
+                      required:
+                        - lat
+                        - lng
+                    bottomLeft:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lng:
+                          type: number
+                      required:
+                        - lat
+                        - lng
+                    precision:
+                      type: number
+                  example:
+                    {
+                      "topRight": { "lat": -33.7, "lng": 151.3 },
+                      "bottomLeft": { "lat": -34.1, "lng": 150.9 },
+                      "precision": 7
+                    }
                 limit:
                   description: Maximum number of entities to return per page.
                   example: 100
@@ -376,6 +411,16 @@ paths:
                             { "name": "English", "count": 100 },
                             { "name": "Japanese", "count": 5 },
                           ],
+                      }
+                  geohashGrid:
+                    type: object
+                    description: Present when boundingBox is used with a precision. Contains counts of entities in each geohash area. Keys are geohash values, and values are the count of entities in that area.
+                    additionalProperties:
+                      type: integer
+                    example:
+                      {
+                        "r3": 30,
+                        "r6": 4
                       }
 
 components:

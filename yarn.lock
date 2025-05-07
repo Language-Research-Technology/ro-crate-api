@@ -6349,9 +6349,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-openapi-docs@npm:^4.3.7":
-  version: 4.3.7
-  resolution: "docusaurus-plugin-openapi-docs@npm:4.3.7"
+"docusaurus-plugin-openapi-docs@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "docusaurus-plugin-openapi-docs@npm:4.4.0"
   dependencies:
     "@apidevtools/json-schema-ref-parser": "npm:^11.5.4"
     "@redocly/openapi-core": "npm:^1.10.5"
@@ -6373,13 +6373,13 @@ __metadata:
     "@docusaurus/utils": ^3.5.0
     "@docusaurus/utils-validation": ^3.5.0
     react: ^16.8.4 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/3427a4c4fbbe0b4452b387d1cab3f7369c181bf50512fe960cf739e7aa32fa912b7b2f2f16fc9a2add1eb831432c5a97ee544e46efa62e70bbffbf8d67a8a37c
+  checksum: 10c0/d1ffd47abe9ce35f3437d51ab28ffe24844e0a149fd5e817a6b2027629ae7fb0ab1228ac072870e6e7be41e9950976a3fdf20fa3913ca1ae531f272043d9d10b
   languageName: node
   linkType: hard
 
-"docusaurus-theme-openapi-docs@npm:^4.3.7":
-  version: 4.3.7
-  resolution: "docusaurus-theme-openapi-docs@npm:4.3.7"
+"docusaurus-theme-openapi-docs@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "docusaurus-theme-openapi-docs@npm:4.4.0"
   dependencies:
     "@hookform/error-message": "npm:^2.0.1"
     "@reduxjs/toolkit": "npm:^1.7.1"
@@ -6414,7 +6414,7 @@ __metadata:
     docusaurus-plugin-sass: ^0.2.3
     react: ^16.8.4 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.4 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/3e3b8c035a49a29ec3c5a1478dd85d967eb972ea692ac48040111f41037267e3844a0a5cb66289f642abd2c9c61977483dbfd3736646a3305ab05b61c3fd4cbe
+  checksum: 10c0/0bbf047c515e831799a76b95664f7a928af2ebdc4189357cc16fedea3779114f3dfcc61adb86041bb1d3c8a9ce684caa9889341729b68d9d91ea335863620788
   languageName: node
   linkType: hard
 
@@ -13517,13 +13517,13 @@ __metadata:
     "@docusaurus/types": "npm:^3.7.0"
     "@mdx-js/react": "npm:^3.1.0"
     clsx: "npm:^2.1.1"
-    docusaurus-plugin-openapi-docs: "npm:^4.3.7"
-    docusaurus-theme-openapi-docs: "npm:^4.3.7"
+    docusaurus-plugin-openapi-docs: "npm:^4.4.0"
+    docusaurus-theme-openapi-docs: "npm:^4.4.0"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     swagger-cli: "npm:^4.0.4"
-    typescript: "npm:~5.8.2"
+    typescript: "npm:~5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -14696,23 +14696,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~5.8.2":
-  version: 5.8.2
-  resolution: "typescript@npm:5.8.2"
+"typescript@npm:~5.8.3":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/5c4f6fbf1c6389b6928fe7b8fcd5dc73bb2d58cd4e3883f1d774ed5bd83b151cbac6b7ecf11723de56d4676daeba8713894b1e9af56174f2f9780ae7848ec3c6
+  checksum: 10c0/5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A~5.8.2#optional!builtin<compat/typescript>":
-  version: 5.8.2
-  resolution: "typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>::version=5.8.2&hash=5786d5"
+"typescript@patch:typescript@npm%3A~5.8.3#optional!builtin<compat/typescript>":
+  version: 5.8.3
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/5448a08e595cc558ab321e49d4cac64fb43d1fa106584f6ff9a8d8e592111b373a995a1d5c7f3046211c8a37201eb6d0f1566f15cdb7a62a5e3be01d087848e2
+  checksum: 10c0/39117e346ff8ebd87ae1510b3a77d5d92dae5a89bde588c747d25da5c146603a99c8ee588c7ef80faaf123d89ed46f6dbd918d534d641083177d5fac38b8a1cb
   languageName: node
   linkType: hard
 
