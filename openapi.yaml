@@ -225,10 +225,10 @@ paths:
             type: string
         - name: noRedirect
           in: query
-          description: When the API would normally perfoem a 302 redirect it returns the location as json instead
-          example: foo.wav
+          description: Return the location as JSON instead of a 302 redirect.
+          example: true
           schema:
-            type: string
+            type: boolean
       responses:
         "200":
           description: 'Returns the requested file content or { "location": "http://location/of/file" }'
@@ -319,7 +319,7 @@ paths:
                   example:
                     {
                       "topRight": { "lat": -33.7, "lng": 151.3 },
-                      "bottomLeft": { "lat": -34.1, "lng": 150.9 }
+                      "bottomLeft": { "lat": -34.1, "lng": 150.9 },
                     }
                 geohashPrecision:
                   type: number
@@ -550,7 +550,7 @@ components:
             objectCount:
               type: integer
               description: The total number of objects in the subtree of this entity.
-            subCcollectionCount:
+            subCollectionCount:
               type: integer
               description: The number of nested sub-collections within this entity.
             fileCount:
