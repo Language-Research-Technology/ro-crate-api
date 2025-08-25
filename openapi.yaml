@@ -514,11 +514,8 @@ components:
             - $ref: "#/components/schemas/ConformsTo"
         recordType:
           description: The entity’s classification, indicating if it is a dataset, repository collection, or repository object.
-          example:
-            - DataSet
-            - RepositoryCollection
-          type: array
-          items:
+          example: RepositoryCollection
+          allOf:
             $ref: "#/components/schemas/RecordType"
         memberOf:
           description: An optional parent entity that this entity belongs to.
