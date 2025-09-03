@@ -40,72 +40,72 @@
 
 .api-method > .menu__link::before,
 .schema > .menu__link::before {
+  flex-shrink: 0;
   width: 55px;
   height: 20px;
+  margin-right: var(--ifm-spacing-horizontal);
   font-size: 12px;
-  line-height: 20px;
-  text-transform: uppercase;
   font-weight: 600;
-  border-radius: 0.25rem;
+  line-height: 20px;
+  text-align: center;
+  text-transform: uppercase;
   border: 1px solid;
   border-inline-start-width: 5px;
-  margin-right: var(--ifm-spacing-horizontal);
-  text-align: center;
-  flex-shrink: 0;
+  border-radius: 0.25rem;
 }
 
 .get > .menu__link::before {
+  color: var(--ifm-color-info-contrast-foreground);
   content: "get";
   background-color: var(--ifm-color-info-contrast-background);
-  color: var(--ifm-color-info-contrast-foreground);
   border-color: var(--ifm-color-info-dark);
 }
 
 .post > .menu__link::before {
+  color: var(--ifm-color-success-contrast-foreground);
   content: "post";
   background-color: var(--ifm-color-success-contrast-background);
-  color: var(--ifm-color-success-contrast-foreground);
   border-color: var(--ifm-color-success-dark);
 }
 
 .delete > .menu__link::before {
+  color: var(--ifm-color-danger-contrast-foreground);
   content: "del";
   background-color: var(--ifm-color-danger-contrast-background);
-  color: var(--ifm-color-danger-contrast-foreground);
   border-color: var(--ifm-color-danger-dark);
 }
 
 .put > .menu__link::before {
+  color: var(--ifm-color-warning-contrast-foreground);
   content: "put";
   background-color: var(--ifm-color-warning-contrast-background);
-  color: var(--ifm-color-warning-contrast-foreground);
   border-color: var(--ifm-color-warning-dark);
 }
 
 .patch > .menu__link::before {
+  color: var(--ifm-color-success-contrast-foreground);
   content: "patch";
   background-color: var(--ifm-color-success-contrast-background);
-  color: var(--ifm-color-success-contrast-foreground);
   border-color: var(--ifm-color-success-dark);
 }
 
 .head > .menu__link::before {
+  color: var(--ifm-color-secondary-contrast-foreground);
   content: "head";
   background-color: var(--ifm-color-secondary-contrast-background);
-  color: var(--ifm-color-secondary-contrast-foreground);
   border-color: var(--ifm-color-secondary-dark);
 }
 
 .event > .menu__link::before {
+  color: var(--ifm-color-secondary-contrast-foreground);
   content: "event";
   background-color: var(--ifm-color-secondary-contrast-background);
-  color: var(--ifm-color-secondary-contrast-foreground);
   border-color: var(--ifm-color-secondary-dark);
 }
 
 .schema > .menu__link::before {
+  color: var(--ifm-color-secondary-contrast-foreground);
   content: "schema";
   background-color: var(--ifm-color-secondary-contrast-background);
-  color: var(--ifm-color-secondary-contrast-foreground);
   border-color: var(--ifm-color-secondary-dark);
 }

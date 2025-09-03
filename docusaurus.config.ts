@@ -1,7 +1,7 @@
-import { themes as prismThemes } from 'prism-react-renderer';
-import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import type { Config } from '@docusaurus/types';
 import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -144,13 +144,7 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
-    languageTabs: [
-      { language: 'curl' },
-      { language: 'python' },
-      { language: 'javascript' },
-      { language: 'ruby' },
-      { language: 'php' },
-    ],
+    languageTabs: [{ language: 'curl' }, { language: 'python' }, { language: 'javascript' }, { language: 'ruby' }, { language: 'php' }],
   } satisfies Preset.ThemeConfig,
 
   plugins: [
@@ -165,9 +159,9 @@ const config: Config = {
             outputDir: 'docs/api',
             sidebarOptions: {
               groupPathsBy: 'tag',
-              categoryLinkSource: "tag",
+              categoryLinkSource: 'tag',
             },
-            downloadUrl: "/ro-crate-api.yaml",
+            downloadUrl: '/ro-crate-api.yaml',
             showSchemas: true,
             showExtensions: true,
           } satisfies OpenApiPlugin.Options,
