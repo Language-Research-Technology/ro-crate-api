@@ -843,6 +843,27 @@ components:
               type: array
               items:
                 type: string
+            access:
+              type: object
+              description: Access information for this entity, including permissions and enrollment details.
+              required:
+                - metadata
+                - files
+              properties:
+                metadata:
+                  type: boolean
+                  description: Whether metadata for this entity is accessible to the current user.
+                files:
+                  type: boolean
+                  description: Whether files within this entity are accessible to the current user.
+                enrollmentUrl:
+                  type: string
+                  format: uri
+                  description: URL for enrollment or authorization process if access is restricted.
+              example:
+                metadata: true
+                files: false
+                enrollmentUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
     SearchEntity:
       description: Contains additional information returned in search contexts.
       properties:
@@ -983,6 +1004,10 @@ components:
           mediaType:
             - "audio/wav"
             - "text/plain"
+          access:
+            metadata: true
+            files: false
+            enrollmentUrl: https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest
 
     EntitiesListResponse:
       summary: Example entities list response
