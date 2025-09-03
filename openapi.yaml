@@ -33,7 +33,7 @@ servers:
     description: PARADISEC
 externalDocs:
   description: Find out more about RO-Crate
-  url: https://johnf.github.com/ro-crate-api
+  url: https://johnf.github.io/ro-crate-api
 tags:
   - name: entities
     description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.
