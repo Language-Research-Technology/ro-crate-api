@@ -147,10 +147,33 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Entity"
+              examples:
+                EntitiesListResponse:
+                  $ref: "#/components/examples/EntitiesListResponse"
+        "400":
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
         "401":
           description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "403":
           description: Access token does not have the required scope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /entity/{id}:
     get:
@@ -179,6 +202,39 @@ paths:
               schema:
                 type: object
                 description: RO-Crate JSON as defined at https://www.researchobject.org/ro-crate/specification
+              examples:
+                ROCrateResponse:
+                  $ref: "#/components/examples/ROCrateResponse"
+        "400":
+          description: Bad Request - Invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Access token does not have the required scope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /entity/{id}/file/{fileId}:
     get:
@@ -234,6 +290,36 @@ paths:
           description: 'Returns the requested file content or { "location": "http://location/of/file" }'
         "302":
           description: Redirects to file location
+        "400":
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Access token does not have the required scope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Entity or file not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /search:
     post:
@@ -419,6 +505,39 @@ paths:
                     additionalProperties:
                       type: integer
                     example: { "r3": 30, "r6": 4 }
+              examples:
+                SearchResponse:
+                  $ref: "#/components/examples/SearchResponse"
+        "400":
+          description: Bad Request - Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Access token does not have the required scope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Unprocessable Entity - Invalid query syntax
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   securitySchemes:
@@ -598,3 +717,104 @@ components:
                 items:
                   type: string
               description: Selected text snippets from fields matching the query, which can be displayed to users for context.
+    ErrorResponse:
+      type: object
+      description: Standard error response format
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              example: INVALID_REQUEST
+            message:
+              type: string
+              description: Human-readable error message
+              example: The request parameters are invalid
+            details:
+              type: object
+              description: Additional error details specific to the error type
+              additionalProperties: true
+              example:
+                field: id
+                value: invalid-uri
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
+    ValidationError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [VALIDATION_ERROR]
+                details:
+                  type: object
+                  properties:
+                    violations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field:
+                            type: string
+                            description: The field that failed validation
+                          message:
+                            type: string
+                            description: Validation error message
+                          value:
+                            description: The invalid value
+                      example:
+                        - field: limit
+                          message: must be between 1 and 1000
+                          value: 2000
+    NotFoundError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [NOT_FOUND]
+                message:
+                  example: The requested entity was not found
+
+  examples:
+    ValidationErrorResponse:
+      summary: Example validation error response
+      value:
+        error:
+          code: "VALIDATION_ERROR"
+          message: "Request validation failed"
+          details:
+            violations:
+              - field: "limit"
+                message: "must be between 1 and 1000"
+                value: 2000
+              - field: "id"
+                message: "must be a valid URI"
+                value: "invalid-uri"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+    NotFoundErrorResponse:
+      summary: Example not found error response
+      value:
+        error:
+          code: "NOT_FOUND"
+          message: "The requested entity was not found"
+          details:
+            entityId: "https://catalog.paradisec.org.au/repository/MISSING/001"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
