@@ -876,6 +876,135 @@ components:
                   example: The requested entity was not found
 
   examples:
+    EntityResponse:
+      summary: Example entity response
+      value:
+        id: "https://catalog.paradisec.org.au/repository/LRB/001"
+        name: "Recordings of West Alor languages"
+        description: "A compilation of recordings featuring various West Alor languages, curated for linguistic research."
+        conformsTo: "https://w3id.org/ldac/profile#Collection"
+        recordType: "RepositoryCollection"
+        memberOf: "https://catalog.paradisec.org.au/repository/LRB"
+        root: "https://catalog.paradisec.org.au/repository/LRB"
+        createdAt: "2023-01-01T12:00:00Z"
+        updatedAt: "2023-01-02T12:00:00Z"
+        extra:
+          collectionCount: 5
+          objectCount: 42
+          subCollectionCount: 3
+          fileCount: 150
+          language:
+            - "English"
+            - "Italian"
+          accessControl: "Public"
+          communicationMode:
+            - "SpokenLanguage"
+          mediaType:
+            - "audio/wav"
+            - "text/plain"
+
+    EntitiesListResponse:
+      summary: Example entities list response
+      value:
+        total: 42
+        entities:
+          - id: "https://catalog.paradisec.org.au/repository/LRB/001"
+            name: "Recordings of West Alor languages"
+            description: "A compilation of recordings featuring various West Alor languages"
+            conformsTo: "https://w3id.org/ldac/profile#Collection"
+            recordType: "RepositoryCollection"
+            createdAt: "2023-01-01T12:00:00Z"
+            updatedAt: "2023-01-02T12:00:00Z"
+          - id: "https://catalog.paradisec.org.au/repository/LRB/002"
+            name: "Another collection"
+            description: "Another example collection"
+            conformsTo: "https://w3id.org/ldac/profile#Collection"
+            recordType: "RepositoryCollection"
+            createdAt: "2023-01-01T13:00:00Z"
+            updatedAt: "2023-01-02T13:00:00Z"
+
+    SearchRequest:
+      summary: Example search request
+      value:
+        searchType: "advanced"
+        query: "name: West Alor AND description: linguistic"
+        filters:
+          inLanguage:
+            - "English"
+          mediaType:
+            - "audio/wav"
+        boundingBox:
+          topRight:
+            lat: -33.7
+            lng: 151.3
+          bottomLeft:
+            lat: -34.1
+            lng: 150.9
+        limit: 20
+        offset: 0
+        sort: "updatedAt"
+        order:
+          - "desc"
+
+    SearchResponse:
+      summary: Example search response with facets
+      value:
+        total: 15
+        searchTime: 42.34
+        entities:
+          - id: "https://catalog.paradisec.org.au/repository/LRB/001"
+            name: "Recordings of West Alor languages"
+            description: "A compilation of recordings featuring various West Alor languages"
+            conformsTo: "https://w3id.org/ldac/profile#Collection"
+            recordType: "RepositoryCollection"
+            searchExtra:
+              score: 0.95
+              highlight:
+                name:
+                  - "Recordings of <em>West Alor</em> languages"
+                description:
+                  - "featuring various West Alor languages, curated for <em>linguistic</em> research"
+        facets:
+          inLanguage:
+            - name: "English"
+              count: 10
+            - name: "Italian"
+              count: 5
+          mediaType:
+            - name: "audio/wav"
+              count: 8
+            - name: "text/plain"
+              count: 7
+        geohashGrid:
+          r3gx: 5
+          r3gy: 3
+
+    ROCrateResponse:
+      summary: Example RO-Crate metadata response
+      value:
+        "@context": "https://w3id.org/ro/crate/1.1/context"
+        "@graph":
+          - "@type": "CreativeWork"
+            "@id": "ro-crate-metadata.json"
+            conformsTo:
+              "@id": "https://w3id.org/ro/crate/1.1"
+            about:
+              "@id": "./"
+          - "@type":
+              - "Dataset"
+              - "RepositoryCollection"
+            "@id": "./"
+            name: "Recordings of West Alor languages"
+            description: "A compilation of recordings featuring various West Alor languages, curated for linguistic research."
+            hasPart:
+              - "@id": "audio001.wav"
+              - "@id": "transcript001.txt"
+          - "@type": "File"
+            "@id": "audio001.wav"
+            name: "Audio recording 001"
+            encodingFormat: "audio/wav"
+            contentSize: 52428800
+
     ValidationErrorResponse:
       summary: Example validation error response
       value:
