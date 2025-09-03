@@ -451,8 +451,14 @@ paths:
                       properties:
                         lat:
                           type: number
+                          minimum: -90
+                          maximum: 90
+                          description: Latitude coordinate
                         lng:
                           type: number
+                          minimum: -180
+                          maximum: 180
+                          description: Longitude coordinate
                       required:
                         - lat
                         - lng
@@ -461,8 +467,14 @@ paths:
                       properties:
                         lat:
                           type: number
+                          minimum: -90
+                          maximum: 90
+                          description: Latitude coordinate
                         lng:
                           type: number
+                          minimum: -180
+                          maximum: 180
+                          description: Longitude coordinate
                       required:
                         - lat
                         - lng
@@ -472,48 +484,49 @@ paths:
                       "bottomLeft": { "lat": -34.1, "lng": 150.9 },
                     }
                 geohashPrecision:
-                  type: number
-                  description: If supplied, returns a geohash grid with this precision.
+                  type: integer
+                  minimum: 1
+                  maximum: 12
+                  description: If supplied, returns a geohash grid with this precision. Must be between 1 (lowest precision) and 12 (highest precision).
                   example: 7
                 limit:
                   description: Maximum number of entities to return per page.
                   example: 100
-                  schema:
-                    type: integer
-                    format: int32
-                    minimum: 1
-                    maximum: 1000
-                    default: 100
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  maximum: 1000
+                  default: 100
                 offset:
                   description: Number of items to skip before returning the results, enabling paging.
                   example: 100
-                  schema:
-                    type: integer
-                    format: int32
-                    minimum: 0
-                    default: 0
+                  type: integer
+                  format: int32
+                  minimum: 0
+                  default: 0
                 sort:
                   description: The field on which to sort results (e.g., `id`, `updatedAt`).
                   example: id
-                  schema:
-                    type: string
-                    enum:
-                      - id
-                      - name
-                      - createdAt
-                      - updatedAt
-                    default: id
+                  type: string
+                  enum:
+                    - id
+                    - name
+                    - createdAt
+                    - updatedAt
+                  default: id
                 order:
                   description: |
                     Sort order:
                     * `asc` - Ascending, from A to Z
                     * `desc` - Descending, from Z to A
                   example: ["asc"]
-                  schema:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Order"
-                    default: ["asc"]
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Order"
+                  default: ["asc"]
+            examples:
+              SearchRequest:
+                $ref: "#/components/examples/SearchRequest"
 
       responses:
         "200":
@@ -537,9 +550,11 @@ paths:
                     type: number
                     example: 42.34
                   entities:
-                    allOf:
-                      - $ref: "#/components/schemas/Entity"
-                      - $ref: "#/components/schemas/SearchEntity"
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Entity"
+                        - $ref: "#/components/schemas/SearchEntity"
                   facets:
                     type: object
                     description: Contains facet counts for the search. Keys are facet fields, and values are arrays of objects indicating the facet name and count.
@@ -624,8 +639,10 @@ components:
     Id:
       type: string
       format: uri
+      pattern: '^https?:\/\/.+'
       readOnly: true
       description: A URI-based identifier, used to reference the entity or file in the RO-Crate. This ensures global uniqueness and enables cross-linking of entities.
+      example: "https://catalog.paradisec.org.au/repository/LRB/001"
     RecordType:
       type: string
       enum:
@@ -699,7 +716,7 @@ components:
           description: The entity’s classification, indicating if it is a dataset, repository collection, or repository object.
           example: RepositoryCollection
           allOf:
-            $ref: "#/components/schemas/RecordType"
+            - $ref: "#/components/schemas/RecordType"
         memberOf:
           description: An optional parent entity that this entity belongs to.
           example: https://catalog.paradisec.org.au/repository/LRB
@@ -714,11 +731,13 @@ components:
           description: The ISO 8601 timestamp denoting when the entity was created.
           type: string
           format: date-time
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$'
           example: 2023-01-01T12:00:00Z
         updatedAt:
           description: The ISO 8601 timestamp denoting when the entity was last updated.
           type: string
           format: date-time
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$'
           example: 2023-01-02T12:00:00Z
         extra:
           type: object
