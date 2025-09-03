@@ -285,9 +285,61 @@ paths:
           example: true
           schema:
             type: boolean
+        - name: Range
+          in: header
+          description: Request specific byte range(s) of the file. Supports standard HTTP Range header syntax.
+          example: "bytes=0-1023"
+          schema:
+            type: string
+            pattern: '^bytes=\\d*-\\d*(,\\d*-\\d*)*$'
       responses:
         "200":
           description: 'Returns the requested file content or { "location": "http://location/of/file" }'
+          headers:
+            Accept-Ranges:
+              schema:
+                type: string
+                enum: [bytes]
+              description: Indicates that the server supports range requests for this file
+            Content-Length:
+              schema:
+                type: integer
+              description: The size of the returned content in bytes
+            Content-Type:
+              schema:
+                type: string
+              description: The MIME type of the returned file
+            Last-Modified:
+              schema:
+                type: string
+                format: date-time
+              description: The date and time the file was last modified
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+        "206":
+          description: Partial Content - returned when Range header is present and valid
+          headers:
+            Accept-Ranges:
+              schema:
+                type: string
+                enum: [bytes]
+              description: Indicates that the server supports range requests
+            Content-Range:
+              schema:
+                type: string
+                pattern: '^bytes \\d+-\\d+/\\d+$'
+              description: Indicates the byte range returned (e.g., "bytes 200-1023/1024")
+              example: "bytes 0-1023/2048"
+            Content-Length:
+              schema:
+                type: integer
+              description: The size of the returned partial content in bytes
+            Content-Type:
+              schema:
+                type: string
+              description: The MIME type of the returned file
         "302":
           description: Redirects to file location
         "400":
@@ -314,6 +366,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+        "416":
+          description: Range Not Satisfiable - the requested range is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                pattern: '^bytes \\*/\\d+$'
+              description: Indicates the total size of the file when range is not satisfiable
+              example: "bytes */2048"
         "500":
           description: Internal Server Error
           content:
