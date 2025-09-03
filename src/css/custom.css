@@ -30,6 +30,8 @@
 }
 
 /* API styling from https://docusaurus-openapi.tryingpan.dev/customization/styling */
+/* Style: High Contrast */
+
 .api-method > .menu__link,
 .schema > .menu__link {
   align-items: center;

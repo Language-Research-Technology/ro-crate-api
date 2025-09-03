@@ -6,7 +6,7 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus gen-api-docs all; docusaurus build",
-    "rebuild-api": "yarn docusaurus clean-api-docs all; docusaurus gen-api-docs all",
+    "rebuild-api": "pnpm docusaurus clean-api-docs all; docusaurus gen-api-docs all",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -16,30 +16,28 @@
     "lint:types": "tsc",
     "lint:format": "biome check .",
     "lint:openapi": "swagger-cli validate openapi.yaml",
-    "lint": "yarn lint:types && yarn lint:format && yarn lint:openapi"
+    "lint": "pnpm lint:types && pnpm lint:format && pnpm lint:openapi"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.7.0",
-    "@docusaurus/faster": "^3.7.0",
-    "@docusaurus/preset-classic": "^3.7.0",
-    "@mdx-js/react": "^3.1.0",
+    "@docusaurus/core": "^3.8.1",
+    "@docusaurus/faster": "^3.8.1",
+    "@docusaurus/preset-classic": "^3.8.1",
+    "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
-    "docusaurus-plugin-openapi-docs": "^4.4.0",
-    "docusaurus-theme-openapi-docs": "^4.4.0",
+    "docusaurus-plugin-openapi-docs": "^4.5.1",
+    "docusaurus-theme-openapi-docs": "^4.5.1",
     "prism-react-renderer": "^2.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@docusaurus/module-type-aliases": "^3.7.0",
-    "@docusaurus/tsconfig": "^3.7.0",
-    "@docusaurus/types": "^3.7.0",
+    "@biomejs/biome": "^2.2.2",
+    "@docusaurus/module-type-aliases": "^3.8.1",
+    "@docusaurus/theme-common": "^3.8.1",
+    "@docusaurus/tsconfig": "^3.8.1",
+    "@docusaurus/types": "^3.8.1",
     "swagger-cli": "^4.0.4",
-    "typescript": "~5.8.3"
-  },
-  "resolutions": {
-    "node-polyfill-webpack-plugin": "^3.0.0"
+    "typescript": "~5.9.2"
   },
   "browserslist": {
     "production": [
@@ -56,5 +54,5 @@
   "engines": {
     "node": ">=18.0"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
 }
