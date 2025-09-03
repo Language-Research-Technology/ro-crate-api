@@ -7,7 +7,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 const config: Config = {
   title: 'RO-Crate API',
-  tagline: 'The official documentation of the RO-Crate API',
+  tagline: 'The official documentation of an RO-Crate API',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -84,7 +84,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'sidebar',
           position: 'left',
-          label: 'API',
+          label: 'Docs',
         },
         { to: '/about', label: 'About', position: 'left' },
         { to: '/blog', label: 'Blog', position: 'left' },
@@ -101,6 +101,10 @@ const config: Config = {
         {
           title: 'Docs',
           items: [
+            {
+              label: 'Getting Started',
+              to: '/docs/getting-started',
+            },
             {
               label: 'API',
               to: '/docs/intro',
@@ -138,7 +142,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} TBA. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} PARADISEC and LDaCA. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

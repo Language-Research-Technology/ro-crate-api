@@ -4,7 +4,7 @@ info:
   summary: A comprehensive API for managing RO-Crate collections
   description: |
     ## Introduction
-    This API offers a standardized approach to interacting with RO-Crate metadata in repositories that host diverse media archives, such as PARADISEC. Building on the RO-Crate specification, the endpoints here facilitate the creation, retrieval, and management of digital collections, ensuring metadata is compliant and discoverable.
+    This API offers a standardised approach to interacting with RO-Crate metadata in repositories that host diverse media archives, such as PARADISEC. Building on the RO-Crate specification, the endpoints here facilitate the creation, retrieval, and management of digital collections, ensuring metadata is compliant and discoverable.
 
     RO-Crate (Research Object Crate) is a lightweight approach to packaging research data with machine-readable metadata. By using this API, developers and archives can programmatically interface with RO-Crate-compliant collections, enabling consistent handling of metadata and files.
 
@@ -15,6 +15,10 @@ info:
     It is expected that most archives will allow public access but there will typically be entities which are private or require authorization.
 
     When authentication is required, an API implementation MUST implement OAuth2 and it is recommended that OpenID is also added for simpler configuration and discoverability.
+
+    ## Rate Limiting
+
+    API implementations MAY implement rate limiting to ensure fair usage and system stability. When rate limiting is active, responses will include rate limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`) and will return a 429 status code when limits are exceeded.
 
   contact:
     name: Issues
@@ -44,7 +48,7 @@ tags:
   - name: entity_model
     x-displayName: The Entity Model
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/Entity" exampleRef="#/components/examples/Order" />
+      <SchemaDefinition schemaRef="#/components/schemas/Entity" exampleRef="#/components/examples/EntityResponse" />
       This section details how the Entity schema is structured, including properties like ID, name, and conforming profile information.
 x-tagGroups:
   - name: General
@@ -55,6 +59,7 @@ x-tagGroups:
     tags:
       - entity_model
 security:
+  - ApiKey: []
   - OAuth2:
       - read
   - OpenID:
@@ -168,6 +173,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
         "500":
           description: Internal Server Error
           content:
@@ -228,6 +235,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
         "500":
           description: Internal Server Error
           content:
@@ -290,7 +299,7 @@ paths:
           example: "bytes=0-1023"
           schema:
             type: string
-            pattern: '^bytes=\\d*-\\d*(,\\d*-\\d*)*$'
+            pattern: '^bytes=\d*-\d*(,\d*-\d*)*$'
       responses:
         "200":
           description: 'Returns the requested file content or { "location": "http://location/of/file" }'
@@ -328,7 +337,7 @@ paths:
             Content-Range:
               schema:
                 type: string
-                pattern: '^bytes \\d+-\\d+/\\d+$'
+                pattern: '^bytes \d+-\d+/\d+$'
               description: Indicates the byte range returned (e.g., "bytes 200-1023/1024")
               example: "bytes 0-1023/2048"
             Content-Length:
@@ -375,9 +384,11 @@ paths:
             Content-Range:
               schema:
                 type: string
-                pattern: '^bytes \\*/\\d+$'
+                pattern: '^bytes \*/\d+$'
               description: Indicates the total size of the file when range is not satisfiable
               example: "bytes */2048"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
         "500":
           description: Internal Server Error
           content:
@@ -610,6 +621,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
         "500":
           description: Internal Server Error
           content:
@@ -618,10 +631,59 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
 components:
+  responses:
+    RateLimitResponse:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: Request limit per time window
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in current time window
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Unix timestamp when the rate limit resets
+        Retry-After:
+          schema:
+            type: integer
+          description: Number of seconds to wait before retrying
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RateLimitError"
+    UnauthorizedResponse:
+      description: Not authenticated
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ForbiddenResponse:
+      description: Access token does not have the required scope
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    InternalServerErrorResponse:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
   securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication. Provides a simpler alternative to OAuth2 for server-to-server integrations.
+
     OpenID:
       type: openIdConnect
-      description: It is recommended that API implementations implement OpenID to make discovery and implemntation easier.
+      description: It is recommended that API implementations implement OpenID to make discovery and implementation easier.
       openIdConnectUrl: /.well-known/openid-configuration
 
     OAuth2:
@@ -730,13 +792,13 @@ components:
           description: The ISO 8601 timestamp denoting when the entity was created.
           type: string
           format: date-time
-          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$'
+          pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$'
           example: 2023-01-01T12:00:00Z
         updatedAt:
           description: The ISO 8601 timestamp denoting when the entity was last updated.
           type: string
           format: date-time
-          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$'
+          pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$'
           example: 2023-01-02T12:00:00Z
         extra:
           type: object
@@ -873,6 +935,26 @@ components:
                   enum: [NOT_FOUND]
                 message:
                   example: The requested entity was not found
+
+    RateLimitError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [RATE_LIMIT_EXCEEDED]
+                message:
+                  example: Rate limit exceeded. Please retry after the specified time.
+                details:
+                  type: object
+                  properties:
+                    retryAfter:
+                      type: integer
+                      description: Number of seconds to wait before retrying
+                      example: 60
 
   examples:
     EntityResponse:

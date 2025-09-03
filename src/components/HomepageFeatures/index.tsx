@@ -11,19 +11,34 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Standards Compliant',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: <>FIXME</>,
+    description: (
+      <>
+        Built on the RO-Crate specification for research data packaging. Ensures interoperability with JSON-LD, Schema.org, and FAIR principles. Conformant with
+        LDAC profiles for language and cultural data.
+      </>
+    ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'RESTful Design',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: <>FIXME</>,
+    description: (
+      <>
+        Clean, predictable API following REST best practices. Comprehensive OpenAPI 3.1.0 specification with detailed documentation. Consistent error handling
+        and response formats across all endpoints.
+      </>
+    ),
   },
   {
-    title: 'Powered by React',
+    title: 'Flexible Authentication',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: <>FIXME</>,
+    description: (
+      <>
+        Multiple authentication methods: OAuth2, OpenID Connect, and API Keys. Public access for open research data with fine-grained access control.
+        Enterprise-ready with rate limiting and comprehensive monitoring.
+      </>
+    ),
   },
 ];
 
