@@ -413,19 +413,18 @@ paths:
                 query:
                   type: string
                   description: |
-                    he query string used in the search. Behavior depends on `searchType`. For `basic`, this can be free text. For `advanced`, Boolean operators can be used.
+                    The query string used in the search. Behavior depends on `searchType`. For `basic`, this can be free text. For `advanced`, Boolean operators can be used.
 
                     When searchType is `basic` this is a free text field of text to search.
 
-                    When searchType is `advanced` this is boolean search field
+                    When searchType is `advanced` this is a boolean search field.
                     Examples:
                       name: John
                       name: John AND description: Engineer
                       name: John AND (description: Engineer OR description: developer)
 
-                    NOTE: It is expected that most implementors of this API will use OpenSearch and the above is the OpenSearch API
-                    This is the most basic that MUST be implemented.
-                    API implementors can support full OpenSearch queries if they wish, refer to your implementations documentation for details
+                    NOTE: This API is implementation-agnostic. The examples above show basic boolean syntax that most search engines support.
+                    API implementors may support additional query syntax - refer to your implementation's documentation for details.
                 filters:
                   type: object
                   description: |
