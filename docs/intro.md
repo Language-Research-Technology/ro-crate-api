@@ -104,22 +104,17 @@ Choose your path based on your needs:
 ### 🚀 **Quick Start**
 
 New to the API? Start here for your first API call:
-→ [Getting Started Guide](./getting-started.md)
+→ [Getting Started Guide](./getting-started/overview.md)
 
 ### 🔑 **Authentication Setup**  
 
 Need to access private data or set up authentication?
-→ [Authentication Guide](./authentication.md)
+→ [Authentication Guide](./getting-started/authentication.md)
 
 ### 💡 **Common Patterns**
 
 Looking for specific workflows and use cases?
-→ [Use Cases Guide](./use-cases.md)
-
-### 🛠️ **Code Examples**
-
-Ready to integrate? See complete examples:
-→ [Code Examples](./examples.md)
+→ [Use Cases Guide](./getting-started/use-cases.md)
 
 ### 🔧 **API Reference**
 
@@ -151,5 +146,5 @@ The API builds on established standards:
 - **OAuth2/OpenID Connect** for authentication
 - **HTTP Range Requests** for file operations
 
-Ready to get started? Head to the [Getting Started Guide](./getting-started.md)
+Ready to get started? Head to the [Getting Started Guide](./getting-started/overview.md)
 for your first API call!

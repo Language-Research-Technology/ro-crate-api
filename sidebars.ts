@@ -22,7 +22,7 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: 'Getting Started',
-        slug: '/docs/getting-started',
+        slug: '/getting-started',
       },
       items: [
         {
@@ -38,7 +38,7 @@ const sidebars: SidebarsConfig = {
         type: 'generated-index',
         title: 'RO-Crate API',
         description: 'API for interacting with RO-Crate metadata',
-        slug: '/docs/api',
+        slug: '/api',
       },
       items: apiSidebar,
     },

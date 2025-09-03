@@ -148,4 +148,3 @@ If you encounter rate limiting, you'll receive:
   authentication
 - [Use Cases](./use-cases.md) - Common patterns and workflows
 - [Error Handling](./error-handling.md) - Handle errors gracefully
-- [Examples](./examples.md) - Code examples in multiple languages
