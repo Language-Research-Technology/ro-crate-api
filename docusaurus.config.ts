@@ -89,7 +89,7 @@ const config: Config = {
         { to: '/about', label: 'About', position: 'left' },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/johnf/ro-crate=api',
+          href: 'https://github.com/johnf/ro-crate-api',
           label: 'GitHub',
           position: 'right',
         },
