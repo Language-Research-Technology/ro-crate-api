@@ -1,8 +1,6 @@
 {
   "enableAllProjectMcpServers": false,
   "permissions": {
-    "allow": [
-      "Bash(pnpm lint:openapi:*)"
-    ]
+    "allow": ["Bash(pnpm lint:openapi:*)"]
   }
 }
