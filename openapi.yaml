@@ -453,11 +453,9 @@ paths:
                     Sort order:
                     * `asc` - Ascending, from A to Z
                     * `desc` - Descending, from Z to A
-                  example: ["asc"]
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/Order"
-                  default: ["asc"]
+                  example: "asc"
+                  $ref: "#/components/schemas/Order"
+                  default: "asc"
             examples:
               SearchRequest:
                 $ref: "#/components/examples/SearchRequest"
@@ -584,12 +582,10 @@ components:
         Sort order:
         * `asc` - Ascending, from A to Z
         * `desc` - Descending, from Z to A
-      example: ["asc"]
+      example: "asc"
       schema:
-        type: array
-        items:
-          $ref: "#/components/schemas/Order"
-        default: ["asc"]
+        $ref: "#/components/schemas/Order"
+        default: "asc"
 
   responses:
     RateLimitResponse:
@@ -930,8 +926,7 @@ components:
         limit: 20
         offset: 0
         sort: "updatedAt"
-        order:
-          - "desc"
+        order: "desc"
 
     SearchResponse:
       summary: Example search response with facets
