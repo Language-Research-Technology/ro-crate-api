@@ -56,7 +56,7 @@ the mandatory fields defined in the API specification. For example:
 
 ## Example: Oni-UI Extensions
 
-The [oni-ui](https://github.com/paradisec-archive/oni-ui) implementation
+The [oni-ui](https://github.com/Language-Research-Technology/oni-ui) implementation
 requires the following additional properties to be present in API responses:
 
 ### Statistical Counts
