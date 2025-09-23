@@ -89,49 +89,10 @@ paths:
             type: array
             items:
               $ref: "#/components/schemas/EntityType"
-        - name: limit
-          in: query
-          description: Maximum number of entities to return.
-          example: 100
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 1000
-            default: 100
-        - name: offset
-          in: query
-          description: Number of items to skip before returning the results, useful for pagination.
-          example: 100
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            default: 0
-        - name: sort
-          in: query
-          description: Field to sort by, such as `id` or `createdAt`.
-          example: id
-          schema:
-            type: string
-            enum:
-              - id
-              - name
-              - createdAt
-              - updatedAt
-            default: id
-        - name: order
-          in: query
-          description: |
-            Sort order:
-            * `asc` - Ascending, from A to Z
-            * `desc` - Descending, from Z to A
-          example: ["asc"]
-          schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/Order"
-            default: ["asc"]
+        - $ref: "#/components/parameters/LimitParameter"
+        - $ref: "#/components/parameters/OffsetParameter"
+        - $ref: "#/components/parameters/SortParameter"
+        - $ref: "#/components/parameters/OrderParameter"
       responses:
         "200":
           description: OK
@@ -162,25 +123,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationError"
         "401":
-          description: Not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/UnauthorizedResponse"
         "403":
-          description: Access token does not have the required scope
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/ForbiddenResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/InternalServerErrorResponse"
 
   /entity/{id}:
     get:
@@ -189,7 +138,7 @@ paths:
       summary: Get an entity
       description: |
         ### Entity
-        Retrieve and an entity in a collection. This endpoint returns key metadata describing each entity (e.g., ID, name, description).
+        Retrieve an entity in a collection. This endpoint returns key metadata describing each entity (e.g., ID, name, description).
       operationId: getEntity
       parameters:
         - name: id
@@ -198,9 +147,7 @@ paths:
           description: The unique RO-Crate ID representing a specific entity in the repository.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
-            type: string
-            allOf:
-              - $ref: "#/components/schemas/Id"
+            $ref: "#/components/schemas/Id"
       responses:
         "200":
           description: OK
@@ -218,17 +165,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationError"
         "401":
-          description: Not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/UnauthorizedResponse"
         "403":
-          description: Access token does not have the required scope
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/ForbiddenResponse"
         "404":
           description: Entity not found
           content:
@@ -238,11 +177,7 @@ paths:
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/InternalServerErrorResponse"
 
   /entity/{id}/file/{fileId}:
     get:
@@ -250,8 +185,8 @@ paths:
         - entities
       summary: Get a file
       description: |
-        ### Entity Open
-        Retrieve an individual file that is part of a given entity’s RO-Crate. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition.
+        ### File Access
+        Retrieve an individual file that is part of a given entity's RO-Crate. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition.
         The API can serve the file or redirect to the location of the file
       operationId: getEntityOpen
       parameters:
@@ -261,9 +196,7 @@ paths:
           description: The RO-Crate entity ID to which the file belongs.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
-            type: string
-            allOf:
-              - $ref: "#/components/schemas/Id"
+            $ref: "#/components/schemas/Id"
         - name: fileId
           in: path
           required: true
@@ -271,6 +204,8 @@ paths:
           example: filename.wav
           schema:
             type: string
+            maxLength: 255
+            pattern: '^[a-zA-Z0-9._\-/\s]+$'
         - name: disposition
           in: query
           description: The HTTP Content-Disposition for how the file should be handled by the client.
@@ -287,6 +222,8 @@ paths:
           example: foo.wav
           schema:
             type: string
+            maxLength: 255
+            pattern: '^[a-zA-Z0-9._\-\s]+$'
         - name: noRedirect
           in: query
           description: Return the location as JSON instead of a 302 redirect.
@@ -299,7 +236,7 @@ paths:
           example: "bytes=0-1023"
           schema:
             type: string
-            pattern: '^bytes=\d*-\d*(,\d*-\d*)*$'
+            pattern: '^bytes=(\d*-\d*|\d+-|(-\d+))(,(\d*-\d*|\d+-|(-\d+)))*$'
       responses:
         "200":
           description: 'Returns the requested file content or { "location": "http://location/of/file" }'
@@ -357,17 +294,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationError"
         "401":
-          description: Not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/UnauthorizedResponse"
         "403":
-          description: Access token does not have the required scope
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/ForbiddenResponse"
         "404":
           description: Entity or file not found
           content:
@@ -390,11 +319,7 @@ paths:
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/InternalServerErrorResponse"
 
   /search:
     post:
@@ -440,7 +365,6 @@ paths:
                   description: |
                     A set of key-value pairs representing additional filters. Keys can be metadata fields (like `inLanguage` or `mediaType`), with each value being an array of acceptable values.
                   additionalProperties:
-                    name: keyword
                     type: array
                     items:
                       type: string
@@ -569,7 +493,6 @@ paths:
                     type: object
                     description: Contains facet counts for the search. Keys are facet fields, and values are arrays of objects indicating the facet name and count.
                     additionalProperties:
-                      name: keyword
                       type: array
                       items:
                         type: object
@@ -604,17 +527,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationError"
         "401":
-          description: Not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/UnauthorizedResponse"
         "403":
-          description: Access token does not have the required scope
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/ForbiddenResponse"
         "422":
           description: Unprocessable Entity - Invalid query syntax
           content:
@@ -624,13 +539,58 @@ paths:
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+          $ref: "#/components/responses/InternalServerErrorResponse"
 
 components:
+  parameters:
+    LimitParameter:
+      name: limit
+      in: query
+      description: Maximum number of entities to return.
+      example: 100
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 1000
+        default: 100
+    OffsetParameter:
+      name: offset
+      in: query
+      description: Number of items to skip before returning the results, useful for pagination.
+      example: 100
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    SortParameter:
+      name: sort
+      in: query
+      description: Field to sort by, such as `id` or `createdAt`.
+      example: id
+      schema:
+        type: string
+        enum:
+          - id
+          - name
+          - createdAt
+          - updatedAt
+        default: id
+    OrderParameter:
+      name: order
+      in: query
+      description: |
+        Sort order:
+        * `asc` - Ascending, from A to Z
+        * `desc` - Descending, from Z to A
+      example: ["asc"]
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/Order"
+        default: ["asc"]
+
   responses:
     RateLimitResponse:
       description: Rate limit exceeded
@@ -734,43 +694,39 @@ components:
         id:
           description: RO-Crate ID that uniquely identifies this entity.
           example: https://catalog.paradisec.org.au/repository/LRB/001
-          allOf:
-            - $ref: "#/components/schemas/Id"
+          $ref: "#/components/schemas/Id"
         name:
           description: Name of the entity.
           type: string
           example: Recordings of West Alor languages
-          maxLength: 64
+          maxLength: 255
+          minLength: 1
         description:
           description: A concise description of the entity’s contents or purpose.
           type: string
           example: A compilation of recordings featuring various West Alor languages, curated for linguistic research.
-          maxLength: 256
+          maxLength: 1000
+          minLength: 1
         entityType:
           description: The main classification of the entity
           example: http://pcdm.org/models#Collection
-          allOf:
-            - $ref: "#/components/schemas/EntityType"
+          $ref: "#/components/schemas/EntityType"
         memberOf:
           description: An optional parent entity that this entity belongs to.
           example: https://catalog.paradisec.org.au/repository/LRB
-          allOf:
-            - $ref: "#/components/schemas/Id"
+          $ref: "#/components/schemas/Id"
         rootCollection:
           description: The top-level collection this entity is part of.
           example: https://catalog.paradisec.org.au/repository/LRB
-          allOf:
-            - $ref: "#/components/schemas/Id"
+          $ref: "#/components/schemas/Id"
         metadataLicenseId:
           description: The metadata license.
-          example: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
-          allOf:
-            - $ref: "#/components/schemas/Id"
+          example: "https://catalog.paradisec.org.au/licenses/metadata"
+          $ref: "#/components/schemas/Id"
         contentLicenseId:
-          description: The metadata license.
-          example: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
-          allOf:
-            - $ref: "#/components/schemas/Id"
+          description: The content license.
+          example: "https://catalog.paradisec.org.au/licenses/content"
+          $ref: "#/components/schemas/Id"
         access:
           type: object
           description: Access information for this entity, including permissions and enrollment details.
