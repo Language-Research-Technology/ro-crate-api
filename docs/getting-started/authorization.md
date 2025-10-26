@@ -12,8 +12,11 @@ is accessible and redirect to enrollment URLs when access is restricted.
 
 ## Access Property Structure
 
-Each entity in the API includes an `access` object with the following
-structure:
+The API uses an `access` property to communicate access permissions. The structure differs between **Entities** and **Files**:
+
+### Entity Access Structure
+
+Entities (Collections, Objects, and MediaObjects) include both metadata and content access controls:
 
 ```json
 {
@@ -26,19 +29,33 @@ structure:
 }
 ```
 
-### Required Fields
+**Required Fields:**
+- **`metadata`** (boolean): Whether the current user has access to view the entity's metadata
+- **`content`** (boolean): Whether the current user has access to download or view the entity's content files
 
-- **`metadata`** (boolean): Whether the current user has access to view the
-entity's metadata
-- **`content`** (boolean): Whether the current user has access to download or
-view the entity's content files
+**Optional Fields:**
+- **`metadataAuthorizationUrl`** (string): URL where users can request access to metadata when `metadata` is `false`
+- **`contentAuthorizationUrl`** (string): URL where users can request access to content when `content` is `false`
 
-### Optional Fields
+### File Access Structure
 
-- **`metadataAuthorizationUrl`** (string): URL where users can request access
-to metadata when `metadata` is `false`
-- **`contentAuthorizationUrl`** (string): URL where users can request access to
-content when `content` is `false`
+Files (accessed via `/files` endpoints) only include content access controls, as file metadata is always accessible:
+
+```json
+{
+  "access": {
+    "content": true
+  }
+}
+```
+
+**Required Fields:**
+- **`content`** (boolean): Whether the current user has access to download the file
+
+**Optional Fields:**
+- **`contentAuthorizationUrl`** (string): URL where users can request access to content when `content` is `false`
+
+**Note:** All examples in the sections below demonstrate Entity access patterns. For Files, only the content-related fields apply
 
 ## Authorization Rules
 

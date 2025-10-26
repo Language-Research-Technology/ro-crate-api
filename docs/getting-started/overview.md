@@ -99,6 +99,47 @@ curl -X POST https://data.ldaca.edu.au/api/search \
   }'
 ```
 
+### Get RO-Crate Metadata
+
+Retrieve the raw RO-Crate JSON-LD metadata for any entity:
+
+```bash
+curl https://data.ldaca.edu.au/api/entity/https%3A%2F%2Fcatalog.paradisec.org.au%2Frepository%2FLRB%2F001/crate
+```
+
+This returns the complete RO-Crate metadata conforming to the RO-Crate specification.
+
+### List Files
+
+List all files in the repository:
+
+```bash
+curl https://data.ldaca.edu.au/api/files
+```
+
+You can filter files by memberOf to show files attached to a specific entity:
+
+```bash
+curl https://data.ldaca.edu.au/api/files?memberOf=https%3A%2F%2Fcatalog.paradisec.org.au%2Frepository%2FLRB%2F001
+```
+
+**Note**: The `/files` endpoint returns files from the repository's file system. Not all files are represented as RO-Crate entities. To list MediaObject entities (files that are part of the RO-Crate), use `/entities?entityType=http://schema.org/MediaObject`.
+
+### Access File Content
+
+For MediaObject entities, you can directly access the file content:
+
+```bash
+curl https://data.ldaca.edu.au/api/file/https%3A%2F%2Fcatalog.paradisec.org.au%2Frepository%2FLRB%2F001%2Ffile.wav
+```
+
+This endpoint supports:
+
+- Content disposition (inline or attachment)
+- Custom filenames
+- HTTP range requests for partial content
+- Redirects to file storage locations
+
 ## Understanding Responses
 
 ### Success Responses
