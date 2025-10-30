@@ -42,6 +42,9 @@ tags:
   - name: entities
     description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.
     x-displayName: Entities
+  - name: files
+    description: Endpoints for listing and accessing files.
+    x-displayName: Files
   - name: search
     description: Endpoints to perform searches on archived media and metadata.
     x-displayName: Search
@@ -54,6 +57,7 @@ x-tagGroups:
   - name: General
     tags:
       - entities
+      - files
       - search
   - name: Models
     tags:
@@ -179,143 +183,55 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerErrorResponse"
 
-  /entity/{id}/file/{fileId}:
+  /entity/{id}/rocrate:
     get:
       tags:
         - entities
-      summary: Get a file
+      summary: Get RO-Crate metadata
       description: |
-        ### File Access
-        Retrieve an individual file that is part of a given entity's RO-Crate. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition.
-        The API can serve the file or redirect to the location of the file
-      operationId: getEntityOpen
+        ### RO-Crate Metadata
+        Retrieve the complete RO-Crate JSON-LD metadata for an entity. This returns the raw RO-Crate representation, which includes all metadata conforming to the RO-Crate specification.
+
+        This endpoint works for any entity type (Collection, Object, or MediaObject) and returns the associated ro-crate-metadata.json content.
+      operationId: getEntityCrate
       parameters:
         - name: id
           in: path
           required: true
-          description: The RO-Crate entity ID to which the file belongs.
+          description: The RO-Crate entity ID.
           example: https://catalog.paradisec.org.au/repository/LRB/001
           schema:
             $ref: "#/components/schemas/Id"
-        - name: fileId
-          in: path
-          required: true
-          description: The path or identifier of the file within the entity’s crate.
-          example: filename.wav
-          schema:
-            type: string
-            maxLength: 255
-            pattern: '^[a-zA-Z0-9._\-/\s]+$'
-        - name: disposition
-          in: query
-          description: The HTTP Content-Disposition for how the file should be handled by the client.
-          example: inline
-          schema:
-            type: string
-            enum:
-              - inline
-              - attachment
-            default: inline
-        - name: filename
-          in: query
-          description: When the file is served as an attachment, the name to use when saving.
-          example: foo.wav
-          schema:
-            type: string
-            maxLength: 255
-            pattern: '^[a-zA-Z0-9._\-\s]+$'
-        - name: noRedirect
-          in: query
-          description: Return the location as JSON instead of a 302 redirect.
-          example: true
-          schema:
-            type: boolean
-        - name: Range
-          in: header
-          description: Request specific byte range(s) of the file. Supports standard HTTP Range header syntax.
-          example: "bytes=0-1023"
-          schema:
-            type: string
-            pattern: '^bytes=(\d*-\d*|\d+-|(-\d+))(,(\d*-\d*|\d+-|(-\d+)))*$'
       responses:
         "200":
-          description: 'Returns the requested file content or { "location": "http://location/of/file" }'
-          headers:
-            Accept-Ranges:
-              schema:
-                type: string
-                enum: [bytes]
-              description: Indicates that the server supports range requests for this file
-            Content-Length:
-              schema:
-                type: integer
-              description: The size of the returned content in bytes
-            Content-Type:
-              schema:
-                type: string
-              description: The MIME type of the returned file
-            Last-Modified:
-              schema:
-                type: string
-                format: date-time
-              description: The date and time the file was last modified
-            ETag:
-              schema:
-                type: string
-              description: Entity tag for cache validation
-        "206":
-          description: Partial Content - returned when Range header is present and valid
-          headers:
-            Accept-Ranges:
-              schema:
-                type: string
-                enum: [bytes]
-              description: Indicates that the server supports range requests
-            Content-Range:
-              schema:
-                type: string
-                pattern: '^bytes \d+-\d+/\d+$'
-              description: Indicates the byte range returned (e.g., "bytes 200-1023/1024")
-              example: "bytes 0-1023/2048"
-            Content-Length:
-              schema:
-                type: integer
-              description: The size of the returned partial content in bytes
-            Content-Type:
-              schema:
-                type: string
-              description: The MIME type of the returned file
-        "302":
-          description: Redirects to file location
-        "400":
-          description: Bad Request - Invalid parameters
+          description: Returns the RO-Crate JSON-LD metadata
           content:
-            application/json:
+            application/ld+json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
+                type: object
+                description: RO-Crate metadata conforming to the RO-Crate specification
+                example:
+                  "@context": "https://w3id.org/ro/crate/1.1/context"
+                  "@graph":
+                    - "@id": "ro-crate-metadata.json"
+                      "@type": "CreativeWork"
+                      conformsTo:
+                        "@id": "https://w3id.org/ro/crate/1.1"
+                      about:
+                        "@id": "./"
+                    - "@id": "./"
+                      "@type": "Dataset"
+                      name: "Recordings of West Alor languages"
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
           $ref: "#/components/responses/ForbiddenResponse"
         "404":
-          description: Entity or file not found
+          description: Entity not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
-        "416":
-          description: Range Not Satisfiable - the requested range is invalid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-          headers:
-            Content-Range:
-              schema:
-                type: string
-                pattern: '^bytes \*/\d+$'
-              description: Indicates the total size of the file when range is not satisfiable
-              example: "bytes */2048"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -539,6 +455,197 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerErrorResponse"
 
+  /files:
+    get:
+      tags:
+        - files
+      summary: List files
+      description: |
+        ### Files
+        Retrieve and list file in the repository. This endpoint returns key metadata describing each file. The response can be filtered by memberOf to show files attached to a specific entity, and supports pagination and sorting.
+      operationId: listFiles
+      parameters:
+        - name: memberOf
+          in: query
+          description: Filter to only files that are directly attached to a specific entity (e.g., files within a collection or object).
+          example: https://catalog.paradisec.org.au/repository/LRB/001
+          schema:
+            type: string
+        - $ref: "#/components/parameters/LimitParameter"
+        - $ref: "#/components/parameters/OffsetParameter"
+        - $ref: "#/components/parameters/SortParameter"
+        - $ref: "#/components/parameters/OrderParameter"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A list of file entities based on the provided filters.
+                required:
+                  - total
+                  - files
+                properties:
+                  total:
+                    description: Total number of files (before pagination) that match the query.
+                    type: integer
+                    example: 42
+                  files:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/File"
+              examples:
+                FilesListResponse:
+                  $ref: "#/components/examples/FilesListResponse"
+        "400":
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerErrorResponse"
+
+  /file/{id}:
+    get:
+      tags:
+        - files
+      summary: Get file content
+      description: |
+        ### File Access
+        Retrieve a file. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition parameter.
+        The API can serve the file directly or redirect to the location of the file.
+      operationId: getFile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the file.
+          example: https://catalog.paradisec.org.au/repository/LRB/001/file.wav
+          schema:
+            $ref: "#/components/schemas/Id"
+        - name: disposition
+          in: query
+          description: The HTTP Content-Disposition for how the file should be handled by the client.
+          example: inline
+          schema:
+            type: string
+            enum:
+              - inline
+              - attachment
+            default: inline
+        - name: filename
+          in: query
+          description: When the file is served as an attachment, the name to use when saving.
+          example: foo.wav
+          schema:
+            type: string
+            maxLength: 255
+            pattern: '^[a-zA-Z0-9._\-\s]+$'
+        - name: noRedirect
+          in: query
+          description: Return the location as JSON instead of a 302 redirect.
+          example: true
+          schema:
+            type: boolean
+        - name: Range
+          in: header
+          description: Request specific byte range(s) of the file. Supports standard HTTP Range header syntax.
+          example: "bytes=0-1023"
+          schema:
+            type: string
+            pattern: '^bytes=(\d*-\d*|\d+-|(-\d+))(,(\d*-\d*|\d+-|(-\d+)))*$'
+      responses:
+        "200":
+          description: 'Returns the requested file content or { "location": "http://location/of/file" }'
+          headers:
+            Accept-Ranges:
+              schema:
+                type: string
+                enum: [bytes]
+              description: Indicates that the server supports range requests for this file
+            Content-Length:
+              schema:
+                type: integer
+              description: The size of the returned content in bytes
+            Content-Type:
+              schema:
+                type: string
+              description: The MIME type of the returned file
+            Last-Modified:
+              schema:
+                type: string
+                format: date-time
+              description: The date and time the file was last modified
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+        "206":
+          description: Partial Content - returned when Range header is present and valid
+          headers:
+            Accept-Ranges:
+              schema:
+                type: string
+                enum: [bytes]
+              description: Indicates that the server supports range requests
+            Content-Range:
+              schema:
+                type: string
+                pattern: '^bytes \d+-\d+/\d+$'
+              description: Indicates the byte range returned (e.g., "bytes 200-1023/1024")
+              example: "bytes 0-1023/2048"
+            Content-Length:
+              schema:
+                type: integer
+              description: The size of the returned partial content in bytes
+            Content-Type:
+              schema:
+                type: string
+              description: The MIME type of the returned file
+        "302":
+          description: Redirects to file location
+        "400":
+          description: Bad Request - Invalid parameters or entity is not a MediaObject type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidEntityTypeError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "416":
+          description: Range Not Satisfiable - the requested range is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                pattern: '^bytes \*/\d+$'
+              description: Indicates the total size of the file when range is not satisfiable
+              example: "bytes */2048"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerErrorResponse"
+
 components:
   parameters:
     LimitParameter:
@@ -572,6 +679,7 @@ components:
         enum:
           - id
           - name
+          - filename
           - createdAt
           - updatedAt
         default: id
@@ -667,7 +775,7 @@ components:
         - http://pcdm.org/models#Object
         - http://schema.org/MediaObject
         - http://schema.org/Person
-      description: An enumerated type describing the nature of the entity, such as a collection or object
+      description: An enumerated type describing the nature of the entity, such as a collection, object, or media object
     Order:
       type: string
       enum:
@@ -725,29 +833,96 @@ components:
           $ref: "#/components/schemas/Id"
         access:
           type: object
-          description: Access information for this entity, including permissions and enrollment details.
+          description: Access information for this entity, including permissions and enrolment details.
           required:
             - metadata
             - content
           properties:
             metadata:
               type: boolean
-              description: Whether metadata for this entity is accessible to the current user.
+              description: Whether metadata is accessible to the current user.
             content:
               type: boolean
-              description: Whether content within this entity is accessible to the current user.
+              description: Whether content is accessible to the current user.
             metadataAuthorizationUrl:
               type: string
               format: uri
-              description: URL for enrollment or authorization process if access is restricted.
+              description: URL for enrolment or authorisation process if metadata access is restricted.
             contentAuthorizationUrl:
               type: string
               format: uri
-              description: URL for enrollment or authorization process if access is restricted.
+              description: URL for enrolment or authorisation process if content access is restricted.
           example:
             metadata: true
             content: false
             contentAuthorizationUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
+        fileId:
+          description: The file ID to use with /files endpoints. Only present for MediaObject entities. Implementations may use any identifier they choose.
+          type: string
+          format: uri
+          example: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+    File:
+      type: object
+      description: A file entity (MediaObject) with file-specific metadata.
+      required:
+        - id
+        - filename
+        - mediaType
+        - size
+        - memberOf
+        - rootCollection
+        - contentLicenseId
+        - access
+      properties:
+        id:
+          description: RO-Crate ID that uniquely identifies this file.
+          example: https://catalog.paradisec.org.au/repository/LRB/001/recording.wav
+          $ref: "#/components/schemas/Id"
+        filename:
+          description: The name of the file.
+          type: string
+          example: recording.wav
+          maxLength: 255
+          minLength: 1
+        mediaType:
+          description: The MIME type of the file.
+          type: string
+          example: audio/wav
+          maxLength: 127
+          pattern: '^[a-z]+/[a-z0-9\-\+\.]+$'
+        size:
+          description: The size of the file in bytes.
+          type: integer
+          format: int64
+          minimum: 0
+          example: 1024
+        memberOf:
+          description: The parent entity that this file belongs to.
+          example: https://catalog.paradisec.org.au/repository/LRB/001
+          $ref: "#/components/schemas/Id"
+        rootCollection:
+          description: The top-level collection this file is part of.
+          example: https://catalog.paradisec.org.au/repository/LRB
+          $ref: "#/components/schemas/Id"
+        contentLicenseId:
+          description: The content licence.
+          example: "https://catalog.paradisec.org.au/licenses/content"
+          $ref: "#/components/schemas/Id"
+        access:
+          type: object
+          description: Access information for this file, including content permissions and enrolment details.
+          required:
+            - content
+          properties:
+            content:
+              type: boolean
+              description: Whether content is accessible to the current user.
+            contentAuthorizationUrl:
+              type: string
+              format: uri
+              description: URL for enrolment or authorisation process if content access is restricted.
+          example:
+            content: true
     SearchEntity:
       description: Contains additional information returned in search contexts.
       properties:
@@ -841,6 +1016,30 @@ components:
                 message:
                   example: The requested entity was not found
 
+    InvalidEntityTypeError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [INVALID_ENTITY_TYPE]
+                message:
+                  example: This operation is only valid for MediaObject entities
+                details:
+                  type: object
+                  properties:
+                    entityType:
+                      type: string
+                      description: The actual entity type of the requested entity
+                      example: http://pcdm.org/models#Collection
+                    expectedType:
+                      type: string
+                      description: The expected entity type for this operation
+                      example: http://schema.org/MediaObject
+
     RateLimitError:
       allOf:
         - $ref: "#/components/schemas/ErrorResponse"
@@ -905,6 +1104,43 @@ components:
             access:
               metadata: true
               content: true
+          - id: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+            name: "recording.wav"
+            description: "Audio recording in WAV format"
+            entityType: "http://schema.org/MediaObject"
+            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
+            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
+            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
+            access:
+              metadata: true
+              content: true
+            fileId: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+
+    FilesListResponse:
+      summary: Example files list response
+      value:
+        total: 15
+        files:
+          - id: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+            filename: "recording.wav"
+            mediaType: "audio/wav"
+            size: 2048576
+            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
+            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
+            access:
+              content: true
+          - id: "https://catalog.paradisec.org.au/repository/LRB/001/transcript.txt"
+            filename: "transcript.txt"
+            mediaType: "text/plain"
+            size: 8192
+            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
+            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
+            access:
+              content: false
+              contentAuthorizationUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fcatalog.paradisec.org.au%2Frepository%2FLRB%2F001%2Ftranscript.txt"
 
     SearchRequest:
       summary: Example search request

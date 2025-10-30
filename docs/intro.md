@@ -54,7 +54,8 @@ engines.
 ### 📊 **Rich Metadata**
 
 - Complete RO-Crate entity information
-- Hierarchical collection browsing
+- Hierarchical collection browsing (Collections, Objects, and MediaObjects)
+- Access to raw RO-Crate metadata
 - File access and download
 - Conformance to LDAC profiles
 
@@ -78,9 +79,11 @@ The RO-Crate API is already in use by several major research data repositories:
 ### Entity Management
 
 - List entities with filtering and pagination
-- Retrieve detailed entity information
+- List files with filtering and pagination
+- Retrieve detailed entity information for Collections, Objects, and MediaObjects
 - Navigate collection hierarchies
-- Access files and media
+- Access file content directly
+- Retrieve raw RO-Crate JSON-LD metadata
 
 ### Advanced Search
 
@@ -96,6 +99,30 @@ The RO-Crate API is already in use by several major research data repositories:
 - Partial content support (byte-range requests)
 - Configurable content disposition
 - Location-based redirects for distributed storage
+
+## Understanding Entities vs Files
+
+The API provides two complementary ways to access content:
+
+### `/entities` Endpoints
+
+The `/entities` endpoints return RO-Crate entities, which can be:
+- **Collections** - Groups of related items
+- **Objects** - Individual items that may contain files
+- **MediaObjects** - Individual files that are part of the RO-Crate
+
+MediaObject entities include a `fileId` field that can be used with the `/files` endpoints.
+
+### `/files` Endpoints
+
+The `/files` endpoints return files from the repository's file system.
+
+**Important**: In a repository, not all files are necessarily represented as file entities in an RO-Crate. Therefore:
+- MediaObject entities will typically be a **subset** of all files
+- Some files may be accessible via `/files` but not appear in `/entities`
+- Files that are part of the RO-Crate metadata will have corresponding MediaObject entities
+
+Use `/entities` when you need RO-Crate metadata about files, and `/files` when you need to browse or access the repository's file system directly.
 
 ## Getting Started
 
