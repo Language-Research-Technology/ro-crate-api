@@ -857,7 +857,7 @@ components:
             content: false
             contentAuthorizationUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
         fileId:
-          description: The file ID to use with /files endpoints. Only present for MediaObject entities. Implementations may use any identifier they choose.
+          description: The file ID to use with /files endpoints. Only present for MediaObject entities. We recommend you use the @id for the MediaObject
           type: string
           format: uri
           example: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
