@@ -87,7 +87,7 @@ paths:
             type: string
         - name: entityType
           in: query
-          description: Restrict the types of entities that are returned by specifying which RO-Crate profiles they conform to.
+          description: Restrict the types of entities that are returned by specifying which RO-Crate profiles they conform to. Any valid entity type URI may be used; if no entities match the given type, an empty list is returned.
           example: ["http://pcdm.org/models#Collection"]
           schema:
             type: array
@@ -769,12 +769,19 @@ components:
       example: "https://catalog.paradisec.org.au/repository/LRB/001"
     EntityType:
       type: string
-      enum:
+      format: uri
+      description: >-
+        A URI identifying the nature of the entity. Implementers may use any
+        valid URI as an entity type. The following core types have specific API
+        behaviour: `http://pcdm.org/models#Collection` (collections),
+        `http://pcdm.org/models#Object` (objects),
+        `http://schema.org/MediaObject` (media objects — supports the
+        `/entity/{id}/file` endpoint), and `http://schema.org/Person` (people).
+      examples:
         - http://pcdm.org/models#Collection
         - http://pcdm.org/models#Object
         - http://schema.org/MediaObject
         - http://schema.org/Person
-      description: An enumerated type describing the nature of the entity, such as a collection, object, or media object
     Order:
       type: string
       enum:
@@ -1016,6 +1023,10 @@ components:
                   example: The requested entity was not found
 
     InvalidEntityTypeError:
+      description: >-
+        Returned when an operation requires a specific entity type but the
+        target entity has a different or unsupported type. For example,
+        requesting file content from an entity that is not a MediaObject.
       allOf:
         - $ref: "#/components/schemas/ErrorResponse"
         - type: object
