@@ -151,6 +151,22 @@ const config: Config = {
   } satisfies Preset.ThemeConfig,
 
   plugins: [
+    // Polyfill Node.js 'path' module for postman-code-generators (used by openapi theme)
+    // TODO: Remove this and try a clean build withouit it
+    function pathPolyfillPlugin() {
+      return {
+        name: 'docusaurus-plugin-path-polyfill',
+        configureWebpack() {
+          return {
+            resolve: {
+              fallback: {
+                path: require.resolve('path-browserify'),
+              },
+            },
+          };
+        },
+      };
+    },
     [
       'docusaurus-plugin-openapi-docs',
       {
