@@ -1066,8 +1066,6 @@ components:
         - filename
         - mediaType
         - size
-        - memberOf
-        - contentLicenseId
         - access
       properties:
         id:
@@ -1092,18 +1090,6 @@ components:
           format: int64
           minimum: 0
           example: 1024
-        memberOf:
-          description: The parent entity that this file belongs to.
-          $ref: "#/components/schemas/EntityReference"
-        rootCollection:
-          description: The top-level collection this file is part of.
-          oneOf:
-            - $ref: "#/components/schemas/EntityReference"
-            - type: "null"
-        contentLicenseId:
-          description: The content licence.
-          example: "https://catalog.paradisec.org.au/licenses/content"
-          $ref: "#/components/schemas/Id"
         access:
           type: object
           description: Access information for this file, including content permissions and enrolment details.
@@ -1378,18 +1364,12 @@ components:
             filename: "recording.wav"
             mediaType: "audio/wav"
             size: 2048576
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
-            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               content: true
           - id: "https://catalog.paradisec.org.au/repository/LRB/001/transcript.txt"
             filename: "transcript.txt"
             mediaType: "text/plain"
             size: 8192
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
-            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               content: false
               contentAuthorizationUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fcatalog.paradisec.org.au%2Frepository%2FLRB%2F001%2Ftranscript.txt"
