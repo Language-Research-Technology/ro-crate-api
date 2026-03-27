@@ -164,7 +164,7 @@ const config: Config = {
               groupPathsBy: 'tag',
               categoryLinkSource: 'tag',
             },
-            downloadUrl: '/ro-crate-api.yaml',
+            downloadUrl: '/ro-crate-api/ro-crate-api.yaml',
             showSchemas: true,
             showExtensions: true,
           } satisfies OpenApiPlugin.Options,
