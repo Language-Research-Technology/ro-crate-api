@@ -15,7 +15,7 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "lint:types": "tsc",
     "lint:format": "biome check .",
-    "lint:openapi": "swagger-cli validate openapi.yaml",
+    "lint:openapi": "redocly lint openapi.yaml",
     "lint": "pnpm lint:types && pnpm lint:format && pnpm lint:openapi"
   },
   "dependencies": {
@@ -36,7 +36,7 @@
     "@docusaurus/theme-common": "^3.9.2",
     "@docusaurus/tsconfig": "^3.9.2",
     "@docusaurus/types": "^3.9.2",
-    "swagger-cli": "^4.0.4",
+    "@redocly/cli": "^2.25.1",
     "typescript": "~5.9.3"
   },
   "browserslist": {
