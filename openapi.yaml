@@ -22,9 +22,9 @@ info:
 
   contact:
     name: Issues
-    url: https://github.com/johnf/ro-crate-api/issues
+    url: https://github.com/Language-Research-Technology/ro-crate-api/issues
   x-logo:
-    url: https://johnf.github.io/ro-crate-api/logo.webp
+    url: https://language-research-technology.github.io/ro-crate-api/img/logo.webp
     altText: RO-Crate API logo
   license:
     name: MIT
@@ -37,7 +37,7 @@ servers:
     description: PARADISEC
 externalDocs:
   description: Find out more about RO-Crate
-  url: https://johnf.github.io/ro-crate-api
+  url: https://Language-Research-Technology.github.io/ro-crate-api
 tags:
   - name: entities
     description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.

@@ -161,7 +161,7 @@ Ready to join the RO-Crate API community?
 - **Implement the spec**: Use our [OpenAPI specification](/docs/api)
 - **Join discussions**: Participate in the RO-Crate community
 - **Contribute**: Submit issues and improvements on
-  [GitHub](https://github.com/johnf/ro-crate-api)
+  [GitHub](https://github.com/Language-Research-Technology/ro-crate-api)
 
 Together, we're building the foundation for the next generation of research data
 infrastructure.

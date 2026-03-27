@@ -107,6 +107,7 @@ The API provides two complementary ways to access content:
 ### `/entities` Endpoints
 
 The `/entities` endpoints return RO-Crate entities, which can be:
+
 - **Collections** - Groups of related items
 - **Objects** - Individual items that may contain files
 - **MediaObjects** - Individual files that are part of the RO-Crate
@@ -118,6 +119,7 @@ MediaObject entities include a `fileId` field that can be used with the `/files`
 The `/files` endpoints return files from the repository's file system.
 
 **Important**: In a repository, not all files are necessarily represented as file entities in an RO-Crate. Therefore:
+
 - MediaObject entities will typically be a **subset** of all files
 - Some files may be accessible via `/files` but not appear in `/entities`
 - Files that are part of the RO-Crate metadata will have corresponding MediaObject entities
@@ -159,7 +161,7 @@ The RO-Crate API specification is actively developed with planned enhancements:
 The RO-Crate API specification is developed openly:
 
 - **Specification Repository**:
-  [github.com/johnf/ro-crate-api](https://github.com/johnf/ro-crate-api)
+  [github.com/Language-Research-Technology/ro-crate-api](https://github.com/Language-Research-Technology/ro-crate-api)
 - **Issue Tracking**: Report bugs and request features
 - **Discussion**: Join the RO-Crate community discussions
 
