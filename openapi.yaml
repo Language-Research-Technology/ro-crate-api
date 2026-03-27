@@ -966,8 +966,7 @@ components:
         valid URI as an entity type. The following core types have specific API
         behaviour: `http://pcdm.org/models#Collection` (collections),
         `http://pcdm.org/models#Object` (objects),
-        `http://schema.org/MediaObject` (media objects — supports the
-        `/entity/{id}/file` endpoint), and `http://schema.org/Person` (people).
+        `http://schema.org/MediaObject` (media objects), and `http://schema.org/Person` (people).
       examples:
         - http://pcdm.org/models#Collection
         - http://pcdm.org/models#Object
@@ -981,7 +980,10 @@ components:
       description: Used to specify the order in sorting results.
     Entity:
       type: object
-      description: An entity represents a single collection or item within the repository, conforming to a specific RO-Crate profile.
+      description: |
+        An entity represents a single collection or item within the repository, conforming to a specific RO-Crate profile.
+
+        For MediaObject entities, the entity `id` is also the file identifier. Use it directly with the `/file/{id}` and `/files` endpoints to access or list the corresponding file.
       required:
         - id
         - name
@@ -1053,14 +1055,10 @@ components:
             metadata: true
             content: false
             contentAuthorizationUrl: "https://test.cadre.example.com/catalogue/application?id=https%3A%2F%2Fhttps%3A%2F%2Fcatalog.paradisec.org.au%2Flicenses%2Ftest"
-        fileId:
-          description: The file ID to use with /files endpoints. Only present for MediaObject entities. We recommend you use the @id for the MediaObject
-          type: string
-          format: uri
-          example: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
     File:
       type: object
-      description: A file entity (MediaObject) with file-specific metadata.
+      description: |
+        A file with file-specific metadata. For files that are also represented as MediaObject entities in the RO-Crate, the file `id` and the MediaObject entity `id` are identical.
       required:
         - id
         - filename
@@ -1367,7 +1365,6 @@ components:
             access:
               metadata: true
               content: true
-            fileId: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
 
     FilesListResponse:
       summary: Example files list response

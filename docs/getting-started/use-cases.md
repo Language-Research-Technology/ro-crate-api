@@ -173,14 +173,13 @@ List files that are part of the RO-Crate:
 curl "https://data.ldaca.edu.au/api/entities?entityType=http://schema.org/MediaObject"
 ```
 
-MediaObject entities include a `fileId` field that references the file in the `/files` endpoint:
+For MediaObject entities, the entity `id` is also the file identifier — use it directly with the `/file/{id}` endpoint:
 
 ```json
 {
   "id": "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav",
   "name": "recording.wav",
   "entityType": "http://schema.org/MediaObject",
-  "fileId": "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav",
   ...
 }
 ```
