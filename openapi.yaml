@@ -126,6 +126,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+              examples:
+                default:
+                  $ref: "#/components/examples/ValidationErrorResponse"
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
@@ -149,7 +152,7 @@ paths:
           in: path
           required: true
           description: The unique RO-Crate ID representing a specific entity in the repository.
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: https://catalog.paradisec.org.au/repository/NT1/001
           schema:
             $ref: "#/components/schemas/Id"
       responses:
@@ -168,6 +171,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+              examples:
+                default:
+                  $ref: "#/components/examples/ValidationErrorResponse"
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
@@ -178,6 +184,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundErrorResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -199,7 +208,7 @@ paths:
           in: path
           required: true
           description: The RO-Crate entity ID.
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: https://catalog.paradisec.org.au/repository/NT1/001
           schema:
             $ref: "#/components/schemas/Id"
       responses:
@@ -252,6 +261,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundErrorResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -269,7 +281,7 @@ paths:
           in: path
           required: true
           description: The RO-Crate entity ID.
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: https://catalog.paradisec.org.au/repository/NT1/001
           schema:
             $ref: "#/components/schemas/Id"
       responses:
@@ -305,6 +317,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundErrorResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -518,6 +533,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+              examples:
+                default:
+                  $ref: "#/components/examples/ValidationErrorResponse"
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
@@ -528,6 +546,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+              examples:
+                default:
+                  $ref: "#/components/examples/ValidationErrorResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -546,7 +567,7 @@ paths:
         - name: memberOf
           in: query
           description: Filter to only files that are directly attached to a specific entity (e.g., files within a collection or object).
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: https://catalog.paradisec.org.au/repository/NT1/001
           schema:
             type: string
         - $ref: "#/components/parameters/LimitParameter"
@@ -582,6 +603,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+              examples:
+                default:
+                  $ref: "#/components/examples/ValidationErrorResponse"
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
@@ -606,7 +630,7 @@ paths:
           in: path
           required: true
           description: The ID of the file.
-          example: https://catalog.paradisec.org.au/repository/LRB/001/file.wav
+          example: https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3
           schema:
             $ref: "#/components/schemas/Id"
         - name: disposition
@@ -706,12 +730,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundErrorResponse"
         "416":
           description: Range Not Satisfiable - the requested range is invalid
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RangeNotSatisfiableError"
+              examples:
+                default:
+                  $ref: "#/components/examples/RangeNotSatisfiableErrorResponse"
           headers:
             Content-Range:
               schema:
@@ -736,7 +766,7 @@ paths:
           in: path
           required: true
           description: The ID of the file.
-          example: https://catalog.paradisec.org.au/repository/LRB/001/file.wav
+          example: https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3
           schema:
             $ref: "#/components/schemas/Id"
         - name: disposition
@@ -808,6 +838,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundErrorResponse"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
@@ -904,18 +937,27 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UnauthorizedError"
+          examples:
+            default:
+              $ref: "#/components/examples/UnauthorizedErrorResponse"
     ForbiddenResponse:
       description: Access token does not have the required scope
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ForbiddenError"
+          examples:
+            default:
+              $ref: "#/components/examples/ForbiddenErrorResponse"
     InternalServerErrorResponse:
       description: Internal Server Error
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/InternalServerError"
+          examples:
+            default:
+              $ref: "#/components/examples/InternalServerErrorResponse"
 
   securitySchemes:
     ApiKey:
@@ -943,9 +985,8 @@ components:
     Id:
       type: string
       format: uri
-      readOnly: true
       description: A URI-based identifier, used to reference the entity or file in the RO-Crate. This ensures global uniqueness and enables cross-linking of entities.
-      example: "https://catalog.paradisec.org.au/repository/LRB/001"
+      example: "https://catalog.paradisec.org.au/repository/NT1/001"
     EntityReference:
       type: object
       description: A resolved reference to an entity, containing its ID and name.
@@ -992,7 +1033,7 @@ components:
       properties:
         id:
           description: RO-Crate ID that uniquely identifies this entity.
-          example: https://catalog.paradisec.org.au/repository/LRB/001
+          example: https://catalog.paradisec.org.au/repository/NT1/001
           $ref: "#/components/schemas/Id"
         name:
           description: Name of the entity.
@@ -1057,7 +1098,7 @@ components:
           description: The file ID to use with /files endpoints. Only present for MediaObject entities. We recommend you use the @id for the MediaObject
           type: string
           format: uri
-          example: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+          example: "https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3"
     File:
       type: object
       description: A file entity (MediaObject) with file-specific metadata.
@@ -1072,18 +1113,18 @@ components:
       properties:
         id:
           description: RO-Crate ID that uniquely identifies this file.
-          example: https://catalog.paradisec.org.au/repository/LRB/001/recording.wav
+          example: https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3
           $ref: "#/components/schemas/Id"
         filename:
           description: The name of the file.
           type: string
-          example: recording.wav
+          example: NT1-001-001A.mp3
           maxLength: 255
           minLength: 1
         mediaType:
           description: The MIME type of the file.
           type: string
-          example: audio/wav
+          example: audio/mpeg
           maxLength: 127
           pattern: '^[a-z]+/[a-z0-9\-\+\.]+$'
         size:
@@ -1132,14 +1173,12 @@ components:
             highlight:
               type: object
               additionalProperties:
-                name: keyword
                 type: array
                 items:
                   type: string
               description: Selected text snippets from fields matching the query, which can be displayed to users for context.
-    ErrorResponse:
+    ValidationError:
       type: object
-      description: Standard error response format
       required:
         - error
       properties:
@@ -1151,177 +1190,247 @@ components:
           properties:
             code:
               type: string
-              description: Machine-readable error code
-              example: INVALID_REQUEST
+              enum: [VALIDATION_ERROR]
             message:
               type: string
               description: Human-readable error message
-              example: The request parameters are invalid
+              example: Request validation failed
             details:
               type: object
               description: Additional error details specific to the error type
-              additionalProperties: true
-              example:
-                field: id
-                value: invalid-uri
+              properties:
+                violations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        description: The field that failed validation
+                      message:
+                        type: string
+                        description: Validation error message
+                      value:
+                        description: The invalid value
+                  example:
+                    - field: limit
+                      message: must be between 1 and 1000
+                      value: 2000
             requestId:
               type: string
               format: uuid
               description: Unique identifier for this request, useful for debugging
               example: 550e8400-e29b-41d4-a716-446655440000
-    ValidationError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
-          properties:
-            error:
-              type: object
-              properties:
-                code:
-                  enum: [VALIDATION_ERROR]
-                details:
-                  type: object
-                  properties:
-                    violations:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          field:
-                            type: string
-                            description: The field that failed validation
-                          message:
-                            type: string
-                            description: Validation error message
-                          value:
-                            description: The invalid value
-                      example:
-                        - field: limit
-                          message: must be between 1 and 1000
-                          value: 2000
     NotFoundError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
+            code:
+              type: string
+              enum: [NOT_FOUND]
+            message:
+              type: string
+              description: Human-readable error message
+              example: The requested entity was not found
+            details:
               type: object
-              properties:
-                code:
-                  enum: [NOT_FOUND]
-                message:
-                  example: The requested entity was not found
+              description: Additional error details specific to the error type
+              additionalProperties: true
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     InvalidEntityTypeError:
       description: >-
         Returned when an operation requires a specific entity type but the
         target entity has a different or unsupported type. For example,
         requesting file content from an entity that is not a MediaObject.
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
+            code:
+              type: string
+              enum: [INVALID_ENTITY_TYPE]
+            message:
+              type: string
+              description: Human-readable error message
+              example: This operation is only valid for MediaObject entities
+            details:
               type: object
+              description: Additional error details specific to the error type
               properties:
-                code:
-                  enum: [INVALID_ENTITY_TYPE]
-                message:
-                  example: This operation is only valid for MediaObject entities
-                details:
-                  type: object
-                  properties:
-                    entityType:
-                      type: string
-                      description: The actual entity type of the requested entity
-                      example: http://pcdm.org/models#Collection
-                    expectedType:
-                      type: string
-                      description: The expected entity type for this operation
-                      example: http://schema.org/MediaObject
+                entityType:
+                  type: string
+                  description: The actual entity type of the requested entity
+                  example: http://pcdm.org/models#Collection
+                expectedType:
+                  type: string
+                  description: The expected entity type for this operation
+                  example: http://schema.org/MediaObject
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     RateLimitError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
+            code:
+              type: string
+              enum: [RATE_LIMIT_EXCEEDED]
+            message:
+              type: string
+              description: Human-readable error message
+              example: Rate limit exceeded. Please retry after the specified time.
+            details:
               type: object
+              description: Additional error details specific to the error type
               properties:
-                code:
-                  enum: [RATE_LIMIT_EXCEEDED]
-                message:
-                  example: Rate limit exceeded. Please retry after the specified time.
-                details:
-                  type: object
-                  properties:
-                    retryAfter:
-                      type: integer
-                      description: Number of seconds to wait before retrying
-                      example: 60
+                retryAfter:
+                  type: integer
+                  description: Number of seconds to wait before retrying
+                  example: 60
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     UnauthorizedError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
-              type: object
-              properties:
-                code:
-                  enum: [UNAUTHORIZED]
-                message:
-                  example: Authentication is required to access this resource
+            code:
+              type: string
+              enum: [UNAUTHORIZED]
+            message:
+              type: string
+              description: Human-readable error message
+              example: Authentication is required to access this resource
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     ForbiddenError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
-              type: object
-              properties:
-                code:
-                  enum: [FORBIDDEN]
-                message:
-                  example: Access token does not have the required scope
+            code:
+              type: string
+              enum: [FORBIDDEN]
+            message:
+              type: string
+              description: Human-readable error message
+              example: Access token does not have the required scope
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     RangeNotSatisfiableError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
-              type: object
-              properties:
-                code:
-                  enum: [RANGE_NOT_SATISFIABLE]
-                message:
-                  example: The requested byte range is not satisfiable
+            code:
+              type: string
+              enum: [RANGE_NOT_SATISFIABLE]
+            message:
+              type: string
+              description: Human-readable error message
+              example: The requested byte range is not satisfiable
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
     InternalServerError:
-      allOf:
-        - $ref: "#/components/schemas/ErrorResponse"
-        - type: object
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
           properties:
-            error:
-              type: object
-              properties:
-                code:
-                  enum: [INTERNAL_ERROR]
-                message:
-                  example: An unexpected error occurred
+            code:
+              type: string
+              enum: [INTERNAL_ERROR]
+            message:
+              type: string
+              description: Human-readable error message
+              example: An unexpected error occurred
+            requestId:
+              type: string
+              format: uuid
+              description: Unique identifier for this request, useful for debugging
+              example: 550e8400-e29b-41d4-a716-446655440000
 
   examples:
     EntityResponse:
       summary: Example entity response
       value:
-        id: "https://catalog.paradisec.org.au/repository/LRB/001"
+        id: "https://catalog.paradisec.org.au/repository/NT1/001"
         name: "Recordings of West Alor languages"
         description: "A compilation of recordings featuring various West Alor languages, curated for linguistic research."
         entityType: "http://pcdm.org/models#Collection"
-        memberOf: "https://catalog.paradisec.org.au/repository/LRB"
-        rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+        memberOf:
+          id: "https://catalog.paradisec.org.au/repository/NT1"
+          name: "South Efate (Vanuatu)"
+        rootCollection:
+          id: "https://catalog.paradisec.org.au/repository/NT1"
+          name: "South Efate (Vanuatu)"
         metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
         contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
         access:
@@ -1334,61 +1443,81 @@ components:
       value:
         total: 42
         entities:
-          - id: "https://catalog.paradisec.org.au/repository/LRB/001"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001"
             name: "Recordings of West Alor languages"
             description: "A compilation of recordings featuring various West Alor languages"
             entityType: "http://pcdm.org/models#Collection"
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               metadata: true
               content: false
-          - id: "https://catalog.paradisec.org.au/repository/LRB/002"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/002"
             name: "Another collection"
             description: "Another example collection"
             entityType: "http://pcdm.org/models#Collection"
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               metadata: true
               content: true
-          - id: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
-            name: "recording.wav"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3"
+            name: "NT1-001-001A.mp3"
             description: "Audio recording in WAV format"
             entityType: "http://schema.org/MediaObject"
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1/001"
+              name: "Recordings of West Alor languages"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               metadata: true
               content: true
-            fileId: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
+            fileId: "https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3"
 
     FilesListResponse:
       summary: Example files list response
       value:
         total: 15
         files:
-          - id: "https://catalog.paradisec.org.au/repository/LRB/001/recording.wav"
-            filename: "recording.wav"
-            mediaType: "audio/wav"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.mp3"
+            filename: "NT1-001-001A.mp3"
+            mediaType: "audio/mpeg"
             size: 2048576
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1/001"
+              name: "Recordings of West Alor languages"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               content: true
-          - id: "https://catalog.paradisec.org.au/repository/LRB/001/transcript.txt"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001/transcript.txt"
             filename: "transcript.txt"
             mediaType: "text/plain"
             size: 8192
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB/001"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1/001"
+              name: "Recordings of West Alor languages"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
               content: false
@@ -1403,7 +1532,7 @@ components:
           inLanguage:
             - "English"
           mediaType:
-            - "audio/wav"
+            - "audio/mpeg"
         boundingBox:
           topRight:
             lat: -33.7
@@ -1421,12 +1550,16 @@ components:
         total: 15
         searchTime: 42.34
         entities:
-          - id: "https://catalog.paradisec.org.au/repository/LRB/001"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001"
             name: "Recordings of West Alor languages"
             description: "A compilation of recordings featuring various West Alor languages"
             entityType: "http://pcdm.org/models#Collection"
-            memberOf: "https://catalog.paradisec.org.au/repository/LRB"
-            rootCollection: "https://catalog.paradisec.org.au/repository/LRB"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
             metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
             contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
             access:
@@ -1446,7 +1579,7 @@ components:
             - name: "Italian"
               count: 5
           mediaType:
-            - name: "audio/wav"
+            - name: "audio/mpeg"
               count: 8
             - name: "text/plain"
               count: 7
