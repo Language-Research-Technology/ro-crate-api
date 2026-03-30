@@ -205,6 +205,26 @@ paths:
       responses:
         "200":
           description: Returns the RO-Crate JSON-LD metadata
+          headers:
+            Content-Length:
+              required: true
+              schema:
+                type: integer
+              description: The size of the returned content in bytes
+            Content-Type:
+              required: true
+              schema:
+                type: string
+              description: The MIME type of the returned content
+            Last-Modified:
+              schema:
+                type: string
+                format: date-time
+              description: The date and time the RO-Crate metadata was last modified
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
           content:
             application/ld+json:
               schema:
@@ -222,6 +242,59 @@ paths:
                     - "@id": "./"
                       "@type": "Dataset"
                       name: "Recordings of West Alor languages"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerErrorResponse"
+    head:
+      tags:
+        - entities
+      summary: Get RO-Crate metadata headers
+      description: |
+        ### RO-Crate Metadata Headers
+        Retrieve RO-Crate metadata headers without downloading the metadata content. Returns the same headers as GET but with no response body, useful for checking metadata availability and caching information.
+      operationId: headEntityCrate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The RO-Crate entity ID.
+          example: https://catalog.paradisec.org.au/repository/LRB/001
+          schema:
+            $ref: "#/components/schemas/Id"
+      responses:
+        "200":
+          description: RO-Crate metadata headers
+          headers:
+            Content-Length:
+              required: true
+              schema:
+                type: integer
+              description: The size of the RO-Crate metadata content in bytes
+            Content-Type:
+              required: true
+              schema:
+                type: string
+              description: The MIME type of the RO-Crate metadata content
+            Last-Modified:
+              schema:
+                type: string
+                format: date-time
+              description: The date and time the RO-Crate metadata was last modified
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
         "401":
           $ref: "#/components/responses/UnauthorizedResponse"
         "403":
@@ -646,6 +719,95 @@ paths:
                 pattern: '^bytes \*/\d+$'
               description: Indicates the total size of the file when range is not satisfiable
               example: "bytes */2048"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerErrorResponse"
+    head:
+      tags:
+        - files
+      summary: Get file metadata headers
+      description: |
+        ### File Metadata Headers
+        Retrieve file metadata headers without downloading the file content. Returns the same headers as GET but with no response body, useful for checking file availability, size, type, and caching information.
+      operationId: headFile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the file.
+          example: https://catalog.paradisec.org.au/repository/LRB/001/file.wav
+          schema:
+            $ref: "#/components/schemas/Id"
+        - name: disposition
+          in: query
+          description: The HTTP Content-Disposition for how the file should be handled by the client.
+          example: inline
+          schema:
+            type: string
+            enum:
+              - inline
+              - attachment
+            default: inline
+        - name: filename
+          in: query
+          description: When the file is served as an attachment, the name to use when saving.
+          example: foo.wav
+          schema:
+            type: string
+            maxLength: 255
+            pattern: '^[a-zA-Z0-9._\-\s]+$'
+        - name: noRedirect
+          in: query
+          description: Return the location as JSON instead of a 302 redirect.
+          example: true
+          schema:
+            type: boolean
+        - name: Range
+          in: header
+          description: Request specific byte range(s) of the file. Supports standard HTTP Range header syntax.
+          example: "bytes=0-1023"
+          schema:
+            type: string
+            pattern: '^bytes=(\d*-\d*|\d+-|(-\d+))(,(\d*-\d*|\d+-|(-\d+)))*$'
+      responses:
+        "200":
+          description: File metadata headers
+          headers:
+            Accept-Ranges:
+              schema:
+                type: string
+                enum: [bytes]
+              description: Indicates that the server supports range requests for this file
+            Content-Length:
+              required: true
+              schema:
+                type: integer
+              description: The size of the file content in bytes
+            Content-Type:
+              required: true
+              schema:
+                type: string
+              description: The MIME type of the file
+            Last-Modified:
+              schema:
+                type: string
+                format: date-time
+              description: The date and time the file was last modified
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
         "429":
           $ref: "#/components/responses/RateLimitResponse"
         "500":
