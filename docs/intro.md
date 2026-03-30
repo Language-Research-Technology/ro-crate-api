@@ -112,7 +112,7 @@ The `/entities` endpoints return RO-Crate entities, which can be:
 - **Objects** - Individual items that may contain files
 - **MediaObjects** - Individual files that are part of the RO-Crate
 
-MediaObject entities include a `fileId` field that can be used with the `/files` endpoints.
+For MediaObject entities, the entity `id` is also the file identifier — use it directly with the `/file/{id}` and `/files` endpoints to access or list the corresponding file.
 
 ### `/files` Endpoints
 
