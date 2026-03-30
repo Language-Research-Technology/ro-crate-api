@@ -767,6 +767,18 @@ components:
       readOnly: true
       description: A URI-based identifier, used to reference the entity or file in the RO-Crate. This ensures global uniqueness and enables cross-linking of entities.
       example: "https://catalog.paradisec.org.au/repository/LRB/001"
+    EntityReference:
+      type: object
+      description: A resolved reference to an entity, containing its ID and name.
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uri
+        name:
+          type: string
     EntityType:
       type: string
       enum:
@@ -788,8 +800,6 @@ components:
         - id
         - name
         - entityType
-        - memberOf
-        - rootCollection
         - metadataLicenseId
         - contentLicenseId
         - access
@@ -816,12 +826,14 @@ components:
           $ref: "#/components/schemas/EntityType"
         memberOf:
           description: An optional parent entity that this entity belongs to.
-          example: https://catalog.paradisec.org.au/repository/LRB
-          $ref: "#/components/schemas/Id"
+          oneOf:
+            - $ref: "#/components/schemas/EntityReference"
+            - type: "null"
         rootCollection:
           description: The top-level collection this entity is part of.
-          example: https://catalog.paradisec.org.au/repository/LRB
-          $ref: "#/components/schemas/Id"
+          oneOf:
+            - $ref: "#/components/schemas/EntityReference"
+            - type: "null"
         metadataLicenseId:
           description: The metadata license.
           example: "https://catalog.paradisec.org.au/licenses/metadata"
@@ -869,7 +881,6 @@ components:
         - mediaType
         - size
         - memberOf
-        - rootCollection
         - contentLicenseId
         - access
       properties:
@@ -897,12 +908,12 @@ components:
           example: 1024
         memberOf:
           description: The parent entity that this file belongs to.
-          example: https://catalog.paradisec.org.au/repository/LRB/001
-          $ref: "#/components/schemas/Id"
+          $ref: "#/components/schemas/EntityReference"
         rootCollection:
           description: The top-level collection this file is part of.
-          example: https://catalog.paradisec.org.au/repository/LRB
-          $ref: "#/components/schemas/Id"
+          oneOf:
+            - $ref: "#/components/schemas/EntityReference"
+            - type: "null"
         contentLicenseId:
           description: The content licence.
           example: "https://catalog.paradisec.org.au/licenses/content"
