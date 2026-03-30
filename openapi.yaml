@@ -95,7 +95,7 @@ paths:
               $ref: "#/components/schemas/EntityType"
         - $ref: "#/components/parameters/LimitParameter"
         - $ref: "#/components/parameters/OffsetParameter"
-        - $ref: "#/components/parameters/SortParameter"
+        - $ref: "#/components/parameters/EntitySortParameter"
         - $ref: "#/components/parameters/OrderParameter"
       responses:
         "200":
@@ -478,7 +478,7 @@ paths:
             type: string
         - $ref: "#/components/parameters/LimitParameter"
         - $ref: "#/components/parameters/OffsetParameter"
-        - $ref: "#/components/parameters/SortParameter"
+        - $ref: "#/components/parameters/FileSortParameter"
         - $ref: "#/components/parameters/OrderParameter"
       responses:
         "200":
@@ -674,16 +674,28 @@ components:
         format: int32
         minimum: 0
         default: 0
-    SortParameter:
+    EntitySortParameter:
       name: sort
       in: query
-      description: Field to sort by, such as `id` or `createdAt`.
+      description: Field to sort by, such as `name` or `createdAt`.
       example: id
       schema:
         type: string
         enum:
           - id
           - name
+          - createdAt
+          - updatedAt
+        default: id
+    FileSortParameter:
+      name: sort
+      in: query
+      description: Field to sort by, such as `filename` or `createdAt`.
+      example: id
+      schema:
+        type: string
+        enum:
+          - id
           - filename
           - createdAt
           - updatedAt
