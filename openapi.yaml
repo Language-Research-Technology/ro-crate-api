@@ -711,7 +711,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/RangeNotSatisfiableError"
           headers:
             Content-Range:
               schema:
@@ -903,19 +903,19 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: "#/components/schemas/UnauthorizedError"
     ForbiddenResponse:
       description: Access token does not have the required scope
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: "#/components/schemas/ForbiddenError"
     InternalServerErrorResponse:
       description: Internal Server Error
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: "#/components/schemas/InternalServerError"
 
   securitySchemes:
     ApiKey:
@@ -1260,6 +1260,58 @@ components:
                       description: Number of seconds to wait before retrying
                       example: 60
 
+    UnauthorizedError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [UNAUTHORIZED]
+                message:
+                  example: Authentication is required to access this resource
+
+    ForbiddenError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [FORBIDDEN]
+                message:
+                  example: Access token does not have the required scope
+
+    RangeNotSatisfiableError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [RANGE_NOT_SATISFIABLE]
+                message:
+                  example: The requested byte range is not satisfiable
+
+    InternalServerError:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  enum: [INTERNAL_ERROR]
+                message:
+                  example: An unexpected error occurred
+
   examples:
     EntityResponse:
       summary: Example entity response
@@ -1426,4 +1478,36 @@ components:
           message: "The requested entity was not found"
           details:
             entityId: "https://catalog.paradisec.org.au/repository/MISSING/001"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+    UnauthorizedErrorResponse:
+      summary: Example unauthorized error response
+      value:
+        error:
+          code: "UNAUTHORIZED"
+          message: "Authentication is required to access this resource"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+    ForbiddenErrorResponse:
+      summary: Example forbidden error response
+      value:
+        error:
+          code: "FORBIDDEN"
+          message: "Access token does not have the required scope"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+    RangeNotSatisfiableErrorResponse:
+      summary: Example range not satisfiable error response
+      value:
+        error:
+          code: "RANGE_NOT_SATISFIABLE"
+          message: "The requested byte range is not satisfiable"
+          requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+    InternalServerErrorResponse:
+      summary: Example internal server error response
+      value:
+        error:
+          code: "INTERNAL_ERROR"
+          message: "An unexpected error occurred"
           requestId: "550e8400-e29b-41d4-a716-446655440000"
