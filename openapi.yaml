@@ -355,15 +355,20 @@ paths:
                   minimum: 0
                   default: 0
                 sort:
-                  description: The field on which to sort results (e.g., `id`, `updatedAt`).
-                  example: id
+                  description: |
+                    The field on which to sort results. Defaults to `relevance`, which orders
+                    results by search score (highest first). When set to `relevance`, the
+                    `order` parameter is ignored. Use `id`, `name`, `createdAt`, or
+                    `updatedAt` to sort by a specific field.
+                  example: relevance
                   type: string
                   enum:
                     - id
                     - name
                     - createdAt
                     - updatedAt
-                  default: id
+                    - relevance
+                  default: relevance
                 order:
                   description: |
                     Sort order:
@@ -1171,7 +1176,6 @@ components:
             lng: 150.9
         limit: 20
         offset: 0
-        sort: "updatedAt"
         order: "desc"
 
     SearchResponse:
