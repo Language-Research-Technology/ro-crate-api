@@ -40,8 +40,8 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.4.9
-        version: 2.4.9
+        specifier: ^2.4.10
+        version: 2.4.10
       '@docusaurus/module-type-aliases':
         specifier: ^3.9.2
         version: 3.9.2(@swc/core@1.10.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -55,8 +55,8 @@ importers:
         specifier: ^3.9.2
         version: 3.9.2(@swc/core@1.10.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@redocly/cli':
-        specifier: ^2.25.1
-        version: 2.25.1(@opentelemetry/api@1.9.1)(core-js@3.40.0)
+        specifier: ^2.25.3
+        version: 2.25.3(@opentelemetry/api@1.9.1)(core-js@3.40.0)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -736,55 +736,55 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
-  '@biomejs/biome@2.4.9':
-    resolution: {integrity: sha512-wvZW92FrwitTcacvCBT8xdAbfbxWfDLwjYMmU3djjqQTh7Ni4ZdiWIT/x5VcZ+RQuxiKzIOzi5D+dcyJDFZMsA==}
+  '@biomejs/biome@2.4.10':
+    resolution: {integrity: sha512-xxA3AphFQ1geij4JTHXv4EeSTda1IFn22ye9LdyVPoJU19fNVl0uzfEuhsfQ4Yue/0FaLs2/ccVi4UDiE7R30w==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@2.4.9':
-    resolution: {integrity: sha512-d5G8Gf2RpH5pYwiHLPA+UpG3G9TLQu4WM+VK6sfL7K68AmhcEQ9r+nkj/DvR/GYhYox6twsHUtmWWWIKfcfQQA==}
+  '@biomejs/cli-darwin-arm64@2.4.10':
+    resolution: {integrity: sha512-vuzzI1cWqDVzOMIkYyHbKqp+AkQq4K7k+UCXWpkYcY/HDn1UxdsbsfgtVpa40shem8Kax4TLDLlx8kMAecgqiw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@2.4.9':
-    resolution: {integrity: sha512-LNCLNgqDMG7BLdc3a8aY/dwKPK7+R8/JXJoXjCvZh2gx8KseqBdFDKbhrr7HCWF8SzNhbTaALhTBoh/I6rf9lA==}
+  '@biomejs/cli-darwin-x64@2.4.10':
+    resolution: {integrity: sha512-14fzASRo+BPotwp7nWULy2W5xeUyFnTaq1V13Etrrxkrih+ez/2QfgFm5Ehtf5vSjtgx/IJycMMpn5kPd5ZNaA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@2.4.9':
-    resolution: {integrity: sha512-8RCww5xnPn2wpK4L/QDGDOW0dq80uVWfppPxHIUg6mOs9B6gRmqPp32h1Ls3T8GnW8Wo5A8u7vpTwz4fExN+sw==}
+  '@biomejs/cli-linux-arm64-musl@2.4.10':
+    resolution: {integrity: sha512-WrJY6UuiSD/Dh+nwK2qOTu8kdMDlLV3dLMmychIghHPAysWFq1/DGC1pVZx8POE3ZkzKR3PUUnVrtZfMfaJjyQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-arm64@2.4.9':
-    resolution: {integrity: sha512-4adnkAUi6K4C/emPRgYznMOcLlUqZdXWM6aIui4VP4LraE764g6Q4YguygnAUoxKjKIXIWPteKMgRbN0wsgwcg==}
+  '@biomejs/cli-linux-arm64@2.4.10':
+    resolution: {integrity: sha512-7MH1CMW5uuxQ/s7FLST63qF8B3Hgu2HRdZ7tA1X1+mk+St4JOuIrqdhIBnnyqeyWJNI+Bww7Es5QZ0wIc1Cmkw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64-musl@2.4.9':
-    resolution: {integrity: sha512-5TD+WS9v5vzXKzjetF0hgoaNFHMcpQeBUwKKVi3JbG1e9UCrFuUK3Gt185fyTzvRdwYkJJEMqglRPjmesmVv4A==}
+  '@biomejs/cli-linux-x64-musl@2.4.10':
+    resolution: {integrity: sha512-kDTi3pI6PBN6CiczsWYOyP2zk0IJI08EWEQyDMQWW221rPaaEz6FvjLhnU07KMzLv8q3qSuoB93ua6inSQ55Tw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64@2.4.9':
-    resolution: {integrity: sha512-L10na7POF0Ks/cgLFNF1ZvIe+X4onLkTi5oP9hY+Rh60Q+7fWzKDDCeGyiHUFf1nGIa9dQOOUPGe2MyYg8nMSQ==}
+  '@biomejs/cli-linux-x64@2.4.10':
+    resolution: {integrity: sha512-tZLvEEi2u9Xu1zAqRjTcpIDGVtldigVvzug2fTuPG0ME/g8/mXpRPcNgLB22bGn6FvLJpHHnqLnwliOu8xjYrg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-win32-arm64@2.4.9':
-    resolution: {integrity: sha512-aDZr0RBC3sMGJOU10BvG7eZIlWLK/i51HRIfScE2lVhfts2dQTreowLiJJd+UYg/tHKxS470IbzpuKmd0MiD6g==}
+  '@biomejs/cli-win32-arm64@2.4.10':
+    resolution: {integrity: sha512-umwQU6qPzH+ISTf/eHyJ/QoQnJs3V9Vpjz2OjZXe9MVBZ7prgGafMy7yYeRGnlmDAn87AKTF3Q6weLoMGpeqdQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@2.4.9':
-    resolution: {integrity: sha512-NS4g/2G9SoQ4ktKtz31pvyc/rmgzlcIDCGU/zWbmHJAqx6gcRj2gj5Q/guXhoWTzCUaQZDIqiCQXHS7BcGYc0w==}
+  '@biomejs/cli-win32-x64@2.4.10':
+    resolution: {integrity: sha512-aW/JU5GuyH4uxMrNYpoC2kjaHlyJGLgIa3XkhPEZI0uKhZhJZU8BuEyJmvgzSPQNGozBwWjC972RaNdcJ9KyJg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -1650,27 +1650,27 @@ packages:
   '@redocly/cli-otel@0.1.2':
     resolution: {integrity: sha512-Bg7BoO5t1x3lVK+KhA5aGPmeXpQmdf6WtTYHhelKJCsQ+tRMiJoFAQoKHoBHAoNxXrhlS3K9lKFLHGmtxsFQfA==}
 
-  '@redocly/cli@2.25.1':
-    resolution: {integrity: sha512-i17Riz3CO3KMhaxMW3OPUw8ipeipnuk4wQTRu4zi2pCA/zI6GkeO/Ku7pdEwPd1LuPIR/RNBTp0YPahmyGy+2A==}
+  '@redocly/cli@2.25.3':
+    resolution: {integrity: sha512-02wjApwJwGD+kGWRoiFVY0Hq960ydMAMHrK3AJH2LMiYNYcrzAr1FSbA3OSylvg2gx3w/r1r710B+iMz3KJKbw==}
     engines: {node: '>=22.12.0 || >=20.19.0 <21.0.0', npm: '>=10'}
     hasBin: true
 
   '@redocly/config@0.22.0':
     resolution: {integrity: sha512-gAy93Ddo01Z3bHuVdPWfCwzgfaYgMdaZPcfL7JZ7hWJoK9V0lXDbigTWkhiPFAaLWzbOJ+kbUQG1+XwIm0KRGQ==}
 
-  '@redocly/config@0.44.2':
-    resolution: {integrity: sha512-/77Y/C4aDCa0XkRYffISHH1K816KDmmFY1LX3TwODJ4Li+DFhvyWiMm7ofFCEssKwNjs3fzGW/ISKOsDFdirJw==}
+  '@redocly/config@0.45.0':
+    resolution: {integrity: sha512-V+wNusPQUaYV1c5s9iptfKQ2Ggno4bMeiyXdNILxqZS87gttwPfqlqHKHKFyz006voS3JsR295cbpx3GlsIxKg==}
 
   '@redocly/openapi-core@1.34.11':
     resolution: {integrity: sha512-V09ayfnb5GyysmvARbt+voFZAjGcf7hSYxOYxSkCc4fbH/DTfq5YWoec8cflvmHHqyIFbqvmGKmYFzqhr9zxDg==}
     engines: {node: '>=18.17.0', npm: '>=9.5.0'}
 
-  '@redocly/openapi-core@2.25.1':
-    resolution: {integrity: sha512-6n1gkzvqLhU1/rCSDvLqSrceiXHMw5YTqrao63nb/SLxPzbhBEW61D9VAvu2dn5HGsanYc9QH0j73W/D3eYsVw==}
+  '@redocly/openapi-core@2.25.3':
+    resolution: {integrity: sha512-GIu3Mdym5IDIPCvXTzMZ6TQw/+7sKd52PdysxNVe7zBk22ExSGnVE9UAk9BaLOzXT77PJWDUwaimBdJoPpxHMA==}
     engines: {node: '>=22.12.0 || >=20.19.0 <21.0.0', npm: '>=10'}
 
-  '@redocly/respect-core@2.25.1':
-    resolution: {integrity: sha512-iF/7uP/kI5BPzdp4e2Ug3UQWU1ghYJoAPURFcqPvtRc0S4G3olyecJggOhDQqyC8iDHvN7SJNmm/O3VWn4QU4Q==}
+  '@redocly/respect-core@2.25.3':
+    resolution: {integrity: sha512-07m80JYdp7J7kH4D1Vqdpa2ZBFCv3QAwCoh2w9H3OjuT/rXQkBSkJQm1n70fzO/HuUf4azzULdp2XnsIpxP2qw==}
     engines: {node: '>=22.12.0 || >=20.19.0 <21.0.0', npm: '>=10'}
 
   '@reduxjs/toolkit@2.11.2':
@@ -7342,39 +7342,39 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@biomejs/biome@2.4.9':
+  '@biomejs/biome@2.4.10':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 2.4.9
-      '@biomejs/cli-darwin-x64': 2.4.9
-      '@biomejs/cli-linux-arm64': 2.4.9
-      '@biomejs/cli-linux-arm64-musl': 2.4.9
-      '@biomejs/cli-linux-x64': 2.4.9
-      '@biomejs/cli-linux-x64-musl': 2.4.9
-      '@biomejs/cli-win32-arm64': 2.4.9
-      '@biomejs/cli-win32-x64': 2.4.9
+      '@biomejs/cli-darwin-arm64': 2.4.10
+      '@biomejs/cli-darwin-x64': 2.4.10
+      '@biomejs/cli-linux-arm64': 2.4.10
+      '@biomejs/cli-linux-arm64-musl': 2.4.10
+      '@biomejs/cli-linux-x64': 2.4.10
+      '@biomejs/cli-linux-x64-musl': 2.4.10
+      '@biomejs/cli-win32-arm64': 2.4.10
+      '@biomejs/cli-win32-x64': 2.4.10
 
-  '@biomejs/cli-darwin-arm64@2.4.9':
+  '@biomejs/cli-darwin-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-darwin-x64@2.4.9':
+  '@biomejs/cli-darwin-x64@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@2.4.9':
+  '@biomejs/cli-linux-arm64-musl@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-arm64@2.4.9':
+  '@biomejs/cli-linux-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@2.4.9':
+  '@biomejs/cli-linux-x64-musl@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-x64@2.4.9':
+  '@biomejs/cli-linux-x64@2.4.10':
     optional: true
 
-  '@biomejs/cli-win32-arm64@2.4.9':
+  '@biomejs/cli-win32-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-win32-x64@2.4.9':
+  '@biomejs/cli-win32-x64@2.4.10':
     optional: true
 
   '@colors/colors@1.5.0':
@@ -8868,15 +8868,15 @@ snapshots:
     dependencies:
       ulid: 2.4.0
 
-  '@redocly/cli@2.25.1(@opentelemetry/api@1.9.1)(core-js@3.40.0)':
+  '@redocly/cli@2.25.3(@opentelemetry/api@1.9.1)(core-js@3.40.0)':
     dependencies:
       '@opentelemetry/exporter-trace-otlp-http': 0.202.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/resources': 2.0.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-trace-node': 2.0.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/semantic-conventions': 1.34.0
       '@redocly/cli-otel': 0.1.2
-      '@redocly/openapi-core': 2.25.1
-      '@redocly/respect-core': 2.25.1
+      '@redocly/openapi-core': 2.25.3
+      '@redocly/respect-core': 2.25.3
       abort-controller: 3.0.0
       ajv: '@redocly/ajv@8.18.0'
       ajv-formats: 3.0.1(@redocly/ajv@8.18.0)
@@ -8910,7 +8910,7 @@ snapshots:
 
   '@redocly/config@0.22.0': {}
 
-  '@redocly/config@0.44.2':
+  '@redocly/config@0.45.0':
     dependencies:
       json-schema-to-ts: 2.7.2
 
@@ -8928,10 +8928,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@redocly/openapi-core@2.25.1':
+  '@redocly/openapi-core@2.25.3':
     dependencies:
       '@redocly/ajv': 8.18.0
-      '@redocly/config': 0.44.2
+      '@redocly/config': 0.45.0
       ajv: '@redocly/ajv@8.18.0'
       ajv-formats: 3.0.1(@redocly/ajv@8.18.0)
       colorette: 1.4.0
@@ -8941,12 +8941,12 @@ snapshots:
       pluralize: 8.0.0
       yaml-ast-parser: 0.0.43
 
-  '@redocly/respect-core@2.25.1':
+  '@redocly/respect-core@2.25.3':
     dependencies:
       '@faker-js/faker': 7.6.0
       '@noble/hashes': 1.8.0
       '@redocly/ajv': 8.18.0
-      '@redocly/openapi-core': 2.25.1
+      '@redocly/openapi-core': 2.25.3
       ajv: '@redocly/ajv@8.18.0'
       better-ajv-errors: 1.2.0(@redocly/ajv@8.18.0)
       colorette: 2.0.20
