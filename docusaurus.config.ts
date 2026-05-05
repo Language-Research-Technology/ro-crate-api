@@ -6,7 +6,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'RO-Crate API',
+  title: 'An RO-Crate API',
   tagline: 'The official documentation of an RO-Crate API',
   favicon: 'img/favicon.ico',
 
