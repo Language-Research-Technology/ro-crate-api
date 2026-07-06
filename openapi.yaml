@@ -86,7 +86,7 @@ paths:
         ### Capabilities
         Declare what this implementation supports — the spec version it targets, the extensions it implements, and the search facets it provides. Every conformant implementation MUST provide this endpoint so that clients can feature-detect rather than relying on per-archive configuration or probing.
 
-        See the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for how extensions are registered and how clients should use this endpoint.
+        See the [Capabilities guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/capabilities) for how clients should use this endpoint, and the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for how extensions are registered.
       operationId: getCapabilities
       responses:
         "200":
