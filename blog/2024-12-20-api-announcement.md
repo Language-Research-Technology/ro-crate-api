@@ -6,7 +6,3 @@ tags: [paradisec, ldaca]
 ---
 
 TODO: Document the first release of our API
-
-<!-- truncate -->
-
-...consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet
