@@ -6,58 +6,98 @@ mdx.format: md
 
 # API Extensions
 
-This guide explains how implementations can extend the RO-Crate API
-specification with additional properties.
+This guide explains how the RO-Crate API specification is extended: the
+extension model, the curated registry, feature detection through
+`/capabilities`, and the rules clients must follow.
 
-## Core vs Extension Properties
+## The Extension Model
 
-The RO-Crate API specification defines mandatory fields that all
-implementations must provide. However, implementations are free to add optional
-extension properties directly at the root level of entity responses to meet
-their specific requirements.
+The core specification defines the endpoints and fields every implementation
+must provide. Beyond that core, functionality is added through **extensions**:
+optional, well-defined units of behaviour that implementations choose to
+provide.
 
-**Important**: Extension properties are implementation-specific and not
-required by the core API. Clients should be prepared to handle additional
-properties beyond those defined in the specification.
+Every extension has:
 
-## How Extensions Work
+- **A stable identifier** (e.g. `segments`) used to declare and detect it
+- **A schema** defining the response properties it adds
+- **Semantics** describing how those properties behave
+- **A configuration schema** defining what the implementation declares about
+  the extension in `/capabilities`
 
-Extension properties are added at the root level of entity objects, alongside
-the mandatory fields defined in the API specification. For example:
+Extensions are optional. An implementation remains conformant while
+implementing only the extensions relevant to its corpus — or none at all.
+
+## The Curated Registry
+
+Extensions are registered in the specification itself. Each registered
+extension is defined in the OpenAPI document: its properties appear inline in
+core schemas as optional fields, each tagged with an `x-extension: <id>`
+annotation so the boundary between core and extension is machine-readable.
+Normative detail lives in the schema descriptions and is rendered on the
+generated API reference pages.
+
+To propose a new extension (or a new variant within an existing one, such as a
+new segment type), open a pull request against
+[this specification repository](https://github.com/Language-Research-Technology/ro-crate-api).
+Registration keeps identifiers stable and collision-free, and gives all
+consumers a single authoritative definition.
+
+### Registered Extensions
+
+| Identifier | Adds | Configuration |
+| --- | --- | --- |
+| `segments` | `searchExtra.segments` — structured drill-down locations (PDF pages, ELAN annotations) for full-text search matches inside files | `maxSegments`: the per-hit segment cap |
+
+### Experimental Extensions
+
+Unregistered, private experiments MUST use an `x-` prefixed identifier (e.g.
+`x-my-experiment`). The `x-` prefix is a sanctioned lane for experimentation
+that cannot collide with registered identifiers. Experimental extensions are
+outside the scope of this specification; register them before relying on them
+across implementations.
+
+## Feature Detection with `/capabilities`
+
+Every conformant implementation provides `GET /capabilities`, which declares:
+
+- **`apiVersion`** — the specification version the implementation targets
+- **`extensions`** — a map of extension identifier to that extension's
+  configuration object. Presence of a key means the extension is implemented;
+  the value is an empty object when the extension has nothing to configure
+- **`facets`** — a map of the facet field names the implementation supports in
+  search, each with an optional display `label`
 
 ```json
 {
-  "id": "https://catalog.paradisec.org.au/repository/LRB/001",
-  "name": "Recordings of West Alor languages",
-  "description": "A compilation of recordings featuring various West Alor languages",
-  "entityType": "http://pcdm.org/models#Collection",
-  "memberOf": "https://catalog.paradisec.org.au/repository/LRB",
-  "rootCollection": "https://catalog.paradisec.org.au/repository/LRB",
-  "metadataLicenseId": "https://license.example.com/metadata",
-  "contentLicenseId": "https://license.example.com/content",
-  "access": {
-    "metadata": true,
-    "content": false
-  },
-
-  // Extension properties below
-  "counts": {
-    "collections": 5,
-    "objects": 42,
-    "subCollections": 3,
-    "files": 150
-  },
-  "language": ["English", "Italian"],
-  "communicationMode": ["SpokenLanguage", "Song"],
-  "mediaType": ["audio/wav", "text/plain"],
-  "accessControl": "Public"
+  "apiVersion": "0.1.0",
+  "extensions": { "segments": { "maxSegments": 5 } },
+  "facets": { "inLanguage": { "label": "Language" }, "mediaType": {} }
 }
 ```
 
-## Example: Oni-UI Extensions
+Detection is a simple key lookup: an archive supports segments exactly when
+`"segments" in capabilities.extensions`.
 
-The [oni-ui](https://github.com/Language-Research-Technology/oni-ui) implementation
-requires the following additional properties to be present in API responses:
+## Client Rules
+
+Clients that work across implementations MUST follow these rules:
+
+1. **Feature-detect before use**: check `/capabilities` rather than probing
+   responses or hard-coding per-archive behaviour
+2. **Tolerate absent extensions**: extension properties are optional; degrade
+   gracefully when an extension (or an individual property) is not present
+3. **Skip unknown variants**: where an extension defines a discriminated union
+   (such as segment `type`), skip values you do not recognise rather than
+   fail — new variants are added by spec revision and deployed clients must
+   keep working
+
+## Legacy Extensions (Pending Registration)
+
+The properties below predate the extension registry. The
+[oni-ui](https://github.com/Language-Research-Technology/oni-ui) implementation
+expects them at the root level of entity responses. They remain documented here
+until they are formally registered as extensions.
 
 ### Statistical Counts
 
@@ -88,28 +128,3 @@ the sub-tree.
 - **`accessControl`** (string): The level of access control required to view or
 download this entity.
   - Example: `"Public"`, `"Restricted"`, `"Private"`
-
-## Implementation Guidelines
-
-When adding extension properties to your API implementation:
-
-1. **Document your extensions**: Clearly document any additional properties
-   your implementation provides
-2. **Use descriptive names**: Choose property names that clearly indicate their
-   purpose
-3. **Consider namespacing**: For complex implementations, consider using
-   prefixed property names to avoid conflicts
-4. **Maintain consistency**: Use consistent data types and naming conventions
-   across your extensions
-5. **Version appropriately**: Consider how extension changes might affect
-   client compatibility
-
-## Other Implementations
-
-Different RO-Crate API implementations may define their own extension
-properties based on their specific use cases and requirements. Always consult
-the documentation for the specific implementation you're working with to
-understand what additional properties might be available.
-
-When building clients that work across multiple implementations, design them to
-gracefully handle unknown extension properties.
