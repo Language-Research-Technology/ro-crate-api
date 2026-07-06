@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 title: Extensions
 mdx.format: md
 ---
@@ -8,7 +8,7 @@ mdx.format: md
 
 This guide explains how the RO-Crate API specification is extended: the
 extension model, the curated registry, feature detection through
-`/capabilities`, and the rules clients must follow.
+[`/capabilities`](./capabilities), and the rules clients must follow.
 
 ## The Extension Model
 
@@ -57,27 +57,12 @@ that cannot collide with registered identifiers. Experimental extensions are
 outside the scope of this specification; register them before relying on them
 across implementations.
 
-## Feature Detection with `/capabilities`
+## Feature Detection
 
-Every conformant implementation provides `GET /capabilities`, which declares:
-
-- **`apiVersion`** — the specification version the implementation targets
-- **`extensions`** — a map of extension identifier to that extension's
-  configuration object. Presence of a key means the extension is implemented;
-  the value is an empty object when the extension has nothing to configure
-- **`facets`** — a map of the facet field names the implementation supports in
-  search, each with an optional display `label`
-
-```json
-{
-  "apiVersion": "0.1.0",
-  "extensions": { "segments": { "maxSegments": 5 } },
-  "facets": { "inLanguage": { "label": "Language" }, "mediaType": {} }
-}
-```
-
-Detection is a simple key lookup: an archive supports segments exactly when
-`"segments" in capabilities.extensions`.
+Implementations declare their implemented extensions in the `extensions`
+member of [`/capabilities`](./capabilities), a map of extension identifier to
+configuration object. Detection is a simple key lookup: an archive supports
+segments exactly when `"segments" in capabilities.extensions`.
 
 ## Client Rules
 
