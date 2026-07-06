@@ -10,7 +10,7 @@ citizens: a curated extension registry, a new required `GET /capabilities`
 endpoint for feature detection, and the first registered extension —
 `segments` — which lets search hits point inside files.
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Why
 
