@@ -20,6 +20,10 @@ info:
 
     API implementations MAY implement rate limiting to ensure fair usage and system stability. When rate limiting is active, responses will include rate limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`) and will return a 429 status code when limits are exceeded.
 
+    ## Extensions
+
+    The core specification can be extended through a curated registry of extensions defined in this document. Every extension has a stable identifier, a schema, and semantics. Implementations choose which extensions to implement and declare them through the `GET /capabilities` endpoint. Extension properties appear in core schemas as optional fields tagged with an `x-extension` annotation. See the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for the full extension model.
+
   contact:
     name: Issues
     url: https://github.com/Language-Research-Technology/ro-crate-api/issues
@@ -29,7 +33,7 @@ info:
   license:
     name: MIT
     identifier: MIT
-  version: 0.0.1
+  version: 0.1.0
 servers:
   - url: https://data.ldaca.edu.au/api
     description: LDaCA
@@ -39,6 +43,9 @@ externalDocs:
   description: Find out more about RO-Crate
   url: https://Language-Research-Technology.github.io/ro-crate-api
 tags:
+  - name: capabilities
+    description: Endpoint for discovering what an implementation supports — the spec version it targets, the extensions it implements, and the search facets it provides.
+    x-displayName: Capabilities
   - name: entities
     description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.
     x-displayName: Entities
@@ -56,6 +63,7 @@ tags:
 x-tagGroups:
   - name: General
     tags:
+      - capabilities
       - entities
       - files
       - search
@@ -69,6 +77,36 @@ security:
   - OpenID:
       - read
 paths:
+  /capabilities:
+    get:
+      tags:
+        - capabilities
+      summary: Get implementation capabilities
+      description: |
+        ### Capabilities
+        Declare what this implementation supports — the spec version it targets, the extensions it implements, and the search facets it provides. Every conformant implementation MUST provide this endpoint so that clients can feature-detect rather than relying on per-archive configuration or probing.
+
+        See the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for how extensions are registered and how clients should use this endpoint.
+      operationId: getCapabilities
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capabilities"
+              examples:
+                CapabilitiesResponse:
+                  $ref: "#/components/examples/CapabilitiesResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "429":
+          $ref: "#/components/responses/RateLimitResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerErrorResponse"
+
   /entities:
     get:
       tags:
@@ -1019,6 +1057,135 @@ components:
         - asc
         - desc
       description: Used to specify the order in sorting results.
+    Capabilities:
+      type: object
+      description: Declares what an implementation supports — the spec version it targets, the registered extensions it implements, and the search facets it provides.
+      required:
+        - apiVersion
+        - extensions
+        - facets
+      properties:
+        apiVersion:
+          type: string
+          description: The version of this specification that the implementation targets.
+          example: "0.1.0"
+        extensions:
+          type: object
+          description: |
+            The registered extensions this implementation provides, as a map of extension identifier to the extension's configuration object. Presence of a key means the extension is implemented; the value is an empty object when the extension has nothing to configure.
+
+            Unregistered experimental extensions use an `x-` prefixed identifier and are outside the scope of this specification.
+          properties:
+            segments:
+              $ref: "#/components/schemas/SegmentsCapability"
+              x-extension: segments
+          additionalProperties:
+            type: object
+          example:
+            segments:
+              maxSegments: 5
+        facets:
+          type: object
+          description: The facet fields the implementation supports in search responses, as a map of facet field name to configuration.
+          additionalProperties:
+            $ref: "#/components/schemas/FacetCapability"
+          example:
+            inLanguage:
+              label: Language
+            mediaType: {}
+    SegmentsCapability:
+      type: object
+      description: Configuration for the `segments` extension.
+      x-extension: segments
+      required:
+        - maxSegments
+      properties:
+        maxSegments:
+          type: integer
+          minimum: 1
+          description: The implementation-defined maximum number of segments returned per search hit.
+          example: 5
+    FacetCapability:
+      type: object
+      description: Configuration for a search facet field.
+      properties:
+        label:
+          type: string
+          description: An optional human-readable display label for the facet field.
+          example: Language
+    Segment:
+      description: |
+        A location inside a file where a full-text search match occurred, allowing clients to deep-link the user to the match. Part of the `segments` extension.
+
+        Each segment is one of the registered segment types, discriminated by `type`. New segment types are added by revision of this specification; clients MUST skip segments with a `type` value they do not recognise rather than fail.
+      x-extension: segments
+      oneOf:
+        - $ref: "#/components/schemas/PageSegment"
+        - $ref: "#/components/schemas/AnnotationSegment"
+      discriminator:
+        propertyName: type
+        mapping:
+          page: "#/components/schemas/PageSegment"
+          annotation: "#/components/schemas/AnnotationSegment"
+    PageSegment:
+      type: object
+      description: A search match located on a page of a paginated document, such as a PDF.
+      x-extension: segments
+      required:
+        - type
+        - page
+        - highlight
+      properties:
+        type:
+          type: string
+          enum:
+            - page
+          description: The segment type discriminator.
+        page:
+          type: integer
+          minimum: 1
+          description: The 1-based page number the match occurred on.
+          example: 3
+        highlight:
+          type: array
+          items:
+            type: string
+          description: Matched text fragments from this page, using the same marking convention as `searchExtra.highlight`.
+    AnnotationSegment:
+      type: object
+      description: A search match located in a time-aligned annotation, such as an ELAN annotation tier.
+      x-extension: segments
+      required:
+        - type
+        - tier
+        - startMs
+        - endMs
+        - highlight
+      properties:
+        type:
+          type: string
+          enum:
+            - annotation
+          description: The segment type discriminator.
+        tier:
+          type: string
+          description: The identifier of the annotation tier the match occurred in (for ELAN, the TIER_ID).
+          example: A_phrase-segnum-en
+        startMs:
+          type: integer
+          minimum: 0
+          description: The start of the matching annotation, in milliseconds from the beginning of the media.
+          example: 83000
+        endMs:
+          type: integer
+          minimum: 0
+          description: The end of the matching annotation, in milliseconds from the beginning of the media.
+          example: 87500
+        highlight:
+          type: array
+          items:
+            type: string
+          description: Matched text fragments from this annotation, using the same marking convention as `searchExtra.highlight`.
     Entity:
       type: object
       description: |
@@ -1160,7 +1327,16 @@ components:
                 type: array
                 items:
                   type: string
-              description: Selected text snippets from fields matching the query, which can be displayed to users for context.
+              description: Selected text snippets from fields matching the query, which can be displayed to users for context. Matched terms are marked within each snippet; this specification is implementation-neutral about the specific mark tag (the examples use `<em>`).
+            segments:
+              type: array
+              items:
+                $ref: "#/components/schemas/Segment"
+              x-extension: segments
+              description: |
+                Part of the `segments` extension — see the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions). Only present when the implementation declares the `segments` extension in `/capabilities`.
+
+                Locations inside the file where the full-text match occurred, allowing clients to deep-link the user to the match (e.g. a PDF page or an ELAN annotation's time range). Segments are optional — absent or empty for hits without structured content. They are ranked by relevance and capped at an implementation-defined limit advertised as `maxSegments` in `/capabilities`.
     ValidationError:
       type: object
       required:
@@ -1402,6 +1578,18 @@ components:
               example: 550e8400-e29b-41d4-a716-446655440000
 
   examples:
+    CapabilitiesResponse:
+      summary: Example capabilities response
+      value:
+        apiVersion: "0.1.0"
+        extensions:
+          segments:
+            maxSegments: 5
+        facets:
+          inLanguage:
+            label: "Language"
+          mediaType: {}
+
     EntityResponse:
       summary: Example entity response
       value:
@@ -1540,6 +1728,37 @@ components:
                   - "Recordings of <em>West Alor</em> languages"
                 description:
                   - "featuring various West Alor languages, curated for <em>linguistic</em> research"
+          - id: "https://catalog.paradisec.org.au/repository/NT1/001/NT1-001-001A.pdf"
+            name: "NT1-001-001A.pdf"
+            description: "Field notes and transcription for the recording"
+            entityType: "http://schema.org/MediaObject"
+            memberOf:
+              id: "https://catalog.paradisec.org.au/repository/NT1/001"
+              name: "Recordings of West Alor languages"
+            rootCollection:
+              id: "https://catalog.paradisec.org.au/repository/NT1"
+              name: "South Efate (Vanuatu)"
+            metadataLicenseId: "https://catalog.paradisec.org.au/licenses/metadata"
+            contentLicenseId: "https://catalog.paradisec.org.au/licenses/content"
+            access:
+              metadata: true
+              content: true
+            searchExtra:
+              score: 0.87
+              highlight:
+                content:
+                  - "notes on <em>West Alor</em> vocabulary"
+              segments:
+                - type: "page"
+                  page: 3
+                  highlight:
+                    - "a wordlist of <em>West Alor</em> terms for kinship"
+                - type: "annotation"
+                  tier: "A_phrase-segnum-en"
+                  startMs: 83000
+                  endMs: 87500
+                  highlight:
+                    - "the speaker lists <em>West Alor</em> place names"
         facets:
           inLanguage:
             - name: "English"
