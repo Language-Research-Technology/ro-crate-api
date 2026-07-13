@@ -1,5 +1,4 @@
 ---
-sidebar_position: 6
 title: Extensions
 mdx.format: md
 ---
@@ -8,7 +7,9 @@ mdx.format: md
 
 This guide explains how the RO-Crate API specification is extended: the
 extension model, the curated registry, feature detection through
-[`/capabilities`](./capabilities), and the rules clients must follow.
+[`/capabilities`](/docs/getting-started/capabilities), and the rules clients
+must follow. Each registered extension has its own page describing it in
+detail.
 
 ## The Extension Model
 
@@ -22,8 +23,8 @@ Every extension has:
 - **A stable identifier** (e.g. `segments`) used to declare and detect it
 - **A schema** defining the response properties it adds
 - **Semantics** describing how those properties behave
-- **A configuration schema** defining what the implementation declares about
-  the extension in `/capabilities`
+- **A capability schema** defining the extra details an implementation
+  communicates about the extension in `/capabilities`
 
 Extensions are optional. An implementation remains conformant while
 implementing only the extensions relevant to its corpus — or none at all.
@@ -35,7 +36,8 @@ extension is defined in the OpenAPI document: its properties appear inline in
 core schemas as optional fields, each tagged with an `x-extension: <id>`
 annotation so the boundary between core and extension is machine-readable.
 Normative detail lives in the schema descriptions and is rendered on the
-generated API reference pages.
+generated API reference pages; each extension also has a guide page here with
+examples and implementation notes.
 
 To propose a new extension (or a new variant within an existing one, such as a
 new segment type), open a pull request against
@@ -45,9 +47,15 @@ consumers a single authoritative definition.
 
 ### Registered Extensions
 
-| Identifier | Adds | Configuration |
+| Identifier | Adds | Capability details |
 | --- | --- | --- |
-| `segments` | `searchExtra.segments` — structured drill-down locations (PDF pages, ELAN annotations) for full-text search matches inside files | `maxSegments`: the per-hit segment cap |
+| [`segments`](./segments) | `searchExtra.segments` — structured drill-down locations (PDF pages, time-aligned annotations) for full-text search matches inside files | none |
+
+### Legacy Extensions
+
+A handful of properties used by the [oni-ui](https://github.com/Language-Research-Technology/oni-ui)
+implementation predate the registry. They are documented on the
+[Legacy Extensions](./legacy) page until they are formally registered.
 
 ### Experimental Extensions
 
@@ -60,9 +68,10 @@ across implementations.
 ## Feature Detection
 
 Implementations declare their implemented extensions in the `extensions`
-member of [`/capabilities`](./capabilities), a map of extension identifier to
-configuration object. Detection is a simple key lookup: an archive supports
-segments exactly when `"segments" in capabilities.extensions`.
+member of [`/capabilities`](/docs/getting-started/capabilities), a map of
+extension identifier to a details object. Detection is a simple key
+lookup: an archive supports segments exactly when
+`"segments" in capabilities.extensions`.
 
 ## Client Rules
 
@@ -76,40 +85,3 @@ Clients that work across implementations MUST follow these rules:
    (such as segment `type`), skip values you do not recognise rather than
    fail — new variants are added by spec revision and deployed clients must
    keep working
-
-## Legacy Extensions (Pending Registration)
-
-The properties below predate the extension registry. The
-[oni-ui](https://github.com/Language-Research-Technology/oni-ui) implementation
-expects them at the root level of entity responses. They remain documented here
-until they are formally registered as extensions.
-
-### Statistical Counts
-
-- **`counts`** (object): Statistical information about the entity's subtree:
-  - **`collections`** (integer): The total number of collections in the subtree
-  - **`objects`** (integer): The total number of objects in the subtree
-  - **`subCollections`** (integer): The number of nested sub-collections within
-  this entity
-  - **`files`** (integer): The number of individual files attached to or within
-  this entity's structure
-
-### Content Classification
-
-- **`language`** (array of strings): All languages contained in the sub-tree of
-entities. Useful for archives that store diverse linguistic data.
-  - Example: `["English", "Italian", "Mandarin"]`
-
-- **`communicationMode`** (array of strings): The modes of communication found
-in this sub-tree's data, such as speech, song, or sign.
-  - Example: `["SpokenLanguage", "Song", "SignLanguage"]`
-
-- **`mediaType`** (array of strings): Media types (MIME types) of files within
-the sub-tree.
-  - Example: `["audio/wav", "text/plain", "video/mp4"]`
-
-### Access Control
-
-- **`accessControl`** (string): The level of access control required to view or
-download this entity.
-  - Example: `"Public"`, `"Restricted"`, `"Private"`

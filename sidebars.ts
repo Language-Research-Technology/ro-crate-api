@@ -33,6 +33,15 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Extensions',
+      link: {
+        type: 'doc',
+        id: 'extensions/index',
+      },
+      items: ['extensions/segments', 'extensions/legacy'],
+    },
+    {
+      type: 'category',
       label: 'API',
       link: {
         type: 'generated-index',
