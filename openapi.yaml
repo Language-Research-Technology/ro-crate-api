@@ -22,7 +22,7 @@ info:
 
     ## Extensions
 
-    The core specification can be extended through a curated registry of extensions defined in this document. Every extension has a stable identifier, a schema, and semantics. Implementations choose which extensions to implement and declare them through the `GET /capabilities` endpoint. Extension properties appear in core schemas as optional fields tagged with an `x-extension` annotation. See the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for the full extension model.
+    The core specification can be extended through a curated registry of extensions defined in this document. Every extension has a stable identifier, a schema, and semantics. Implementations choose which extensions to implement and declare them through the `GET /capabilities` endpoint. Extension properties appear in core schemas as optional fields tagged with an `x-extension` annotation. See the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/extensions) for the full extension model.
 
   contact:
     name: Issues
@@ -44,7 +44,7 @@ externalDocs:
   url: https://Language-Research-Technology.github.io/ro-crate-api
 tags:
   - name: capabilities
-    description: Endpoint for discovering what an implementation supports — the spec version it targets, the extensions it implements, and the search facets it provides.
+    description: Endpoint for discovering what an implementation supports — the spec version it targets, the extensions it implements, and the search filters and facets it provides.
     x-displayName: Capabilities
   - name: entities
     description: Endpoints related to the creation, retrieval, and management of RO-Crate entities.
@@ -84,9 +84,9 @@ paths:
       summary: Get implementation capabilities
       description: |
         ### Capabilities
-        Declare what this implementation supports — the spec version it targets, the extensions it implements, and the search facets it provides. Every conformant implementation MUST provide this endpoint so that clients can feature-detect rather than relying on per-archive configuration or probing.
+        Declare what this implementation supports — the spec version it targets, the extensions it implements, and the search filters and facets it provides. Every conformant implementation MUST provide this endpoint so that clients can feature-detect rather than relying on per-archive configuration or probing.
 
-        See the [Capabilities guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/capabilities) for how clients should use this endpoint, and the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions) for how extensions are registered.
+        See the [Capabilities guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/capabilities) for how clients should use this endpoint, and the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/extensions) for how extensions are registered.
       operationId: getCapabilities
       responses:
         "200":
@@ -405,15 +405,20 @@ paths:
                 filters:
                   type: object
                   description: |
-                    A set of key-value pairs representing additional filters. Keys can be metadata fields (like `inLanguage` or `mediaType`), with each value being an array of acceptable values.
+                    A set of key-value pairs representing additional filters. Keys MUST be filter fields the implementation declares in `/capabilities` under `search.filters`; a request using an undeclared key MUST be rejected with a 400 `ValidationError`.
+
+                    Each value is either an array of acceptable values (matched as exact terms, valid for any filter type) or a range object with inclusive `gte`/`lte` bounds (valid only for filters declared with type `date` or `number`). A range sent to a `string` or `boolean` filter MUST be rejected with a 400 `ValidationError`.
                   additionalProperties:
-                    type: array
-                    items:
-                      type: string
+                    oneOf:
+                      - type: array
+                        items:
+                          type: string
+                      - $ref: "#/components/schemas/FilterRange"
                   example:
                     {
                       "inLanguage": ["English", "Japanese"],
                       "mediaType": ["image/png"],
+                      "createdAt": { "gte": "2020-01-01", "lte": "2021-01-01" },
                     }
                 boundingBox:
                   type: object
@@ -1059,11 +1064,11 @@ components:
       description: Used to specify the order in sorting results.
     Capabilities:
       type: object
-      description: Declares what an implementation supports — the spec version it targets, the registered extensions it implements, and the search facets it provides.
+      description: Declares what an implementation supports — the spec version it targets, the registered extensions it implements, and the search filters and facets it provides.
       required:
         - apiVersion
         - extensions
-        - facets
+        - search
       properties:
         apiVersion:
           type: string
@@ -1072,7 +1077,7 @@ components:
         extensions:
           type: object
           description: |
-            The registered extensions this implementation provides, as a map of extension identifier to the extension's configuration object. Presence of a key means the extension is implemented; the value is an empty object when the extension has nothing to configure.
+            The registered extensions this implementation provides, as a map of extension identifier to a details object describing how the extension is provided. Presence of a key means the extension is implemented; the value is an empty object when the extension has no extra details to communicate.
 
             Unregistered experimental extensions use an `x-` prefixed identifier and are outside the scope of this specification.
           properties:
@@ -1082,11 +1087,36 @@ components:
           additionalProperties:
             type: object
           example:
-            segments:
-              maxSegments: 5
+            segments: {}
+        search:
+          $ref: "#/components/schemas/SearchCapability"
+    SearchCapability:
+      type: object
+      description: |
+        Declares what the implementation's search endpoint supports — the filters that may be used in search requests and the facets returned in search responses.
+
+        Every field declared in `facets` MUST also be declared in `filters`, so that clients can always turn a facet value the user clicks into a filter on the next request. Filter-only fields (for example date fields, which are filterable but not meaningful as facets) are permitted.
+      required:
+        - filters
+        - facets
+      properties:
+        filters:
+          type: object
+          description: The fields that may be used in the search request's `filters` object, as a map of field name to a declaration of the field's type and display label. Requests using a field not declared here MUST be rejected with a 400 `ValidationError`.
+          additionalProperties:
+            $ref: "#/components/schemas/FilterCapability"
+          example:
+            inLanguage:
+              type: string
+              label: Language
+            mediaType:
+              type: string
+            createdAt:
+              type: date
+              label: Date created
         facets:
           type: object
-          description: The facet fields the implementation supports in search responses, as a map of facet field name to configuration.
+          description: The facet fields the implementation supports in search responses, as a map of facet field name to its declaration. Every field listed here MUST also appear in `filters`.
           additionalProperties:
             $ref: "#/components/schemas/FacetCapability"
           example:
@@ -1095,24 +1125,56 @@ components:
             mediaType: {}
     SegmentsCapability:
       type: object
-      description: Configuration for the `segments` extension.
+      description: Details the implementation communicates about its `segments` support. The extension currently has no extra details to communicate; the value is an empty object.
       x-extension: segments
-      required:
-        - maxSegments
-      properties:
-        maxSegments:
-          type: integer
-          minimum: 1
-          description: The implementation-defined maximum number of segments returned per search hit.
-          example: 5
     FacetCapability:
       type: object
-      description: Configuration for a search facet field.
+      description: Describes a search facet field the implementation supports.
       properties:
         label:
           type: string
           description: An optional human-readable display label for the facet field.
           example: Language
+    FilterCapability:
+      type: object
+      description: |
+        Describes a search filter field the implementation supports. The `type` tells clients which UI element suits the field (e.g. a date picker for `date`, a toggle for `boolean`) and which request syntax the field accepts: `date` and `number` filters accept a range object as well as an array of values; `string` and `boolean` filters accept an array of values only.
+
+        New filter types are added by revision of this specification; clients MUST hide filters with a `type` value they do not recognise rather than fail.
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - string
+            - date
+            - number
+            - boolean
+          description: The filter's value type. `date` values are ISO 8601 strings. `boolean` values are the strings `"true"` and `"false"`.
+          example: date
+        label:
+          type: string
+          description: An optional human-readable display label for the filter field.
+          example: Date created
+    FilterRange:
+      type: object
+      description: An inclusive range constraint for a search filter. Valid only for filters declared with type `date` or `number` in `/capabilities`. At least one bound is required; values are ISO 8601 strings for `date` filters and numbers for `number` filters.
+      minProperties: 1
+      additionalProperties: false
+      properties:
+        gte:
+          oneOf:
+            - type: string
+            - type: number
+          description: The inclusive lower bound.
+          example: "2020-01-01"
+        lte:
+          oneOf:
+            - type: string
+            - type: number
+          description: The inclusive upper bound.
+          example: "2021-01-01"
     Segment:
       description: |
         A location inside a file where a full-text search match occurred, allowing clients to deep-link the user to the match. Part of the `segments` extension.
@@ -1121,12 +1183,12 @@ components:
       x-extension: segments
       oneOf:
         - $ref: "#/components/schemas/PageSegment"
-        - $ref: "#/components/schemas/AnnotationSegment"
+        - $ref: "#/components/schemas/TimeAlignedAnnotationSegment"
       discriminator:
         propertyName: type
         mapping:
           page: "#/components/schemas/PageSegment"
-          annotation: "#/components/schemas/AnnotationSegment"
+          time-aligned-annotation: "#/components/schemas/TimeAlignedAnnotationSegment"
     PageSegment:
       type: object
       description: A search match located on a page of a paginated document, such as a PDF.
@@ -1151,7 +1213,7 @@ components:
           items:
             type: string
           description: Matched text fragments from this page, using the same marking convention as `searchExtra.highlight`.
-    AnnotationSegment:
+    TimeAlignedAnnotationSegment:
       type: object
       description: A search match located in a time-aligned annotation, such as an ELAN annotation tier.
       x-extension: segments
@@ -1165,7 +1227,7 @@ components:
         type:
           type: string
           enum:
-            - annotation
+            - time-aligned-annotation
           description: The segment type discriminator.
         tier:
           type: string
@@ -1334,9 +1396,9 @@ components:
                 $ref: "#/components/schemas/Segment"
               x-extension: segments
               description: |
-                Part of the `segments` extension — see the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/extensions). Only present when the implementation declares the `segments` extension in `/capabilities`.
+                Part of the `segments` extension — see the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/extensions). Only present when the implementation declares the `segments` extension in `/capabilities`.
 
-                Locations inside the file where the full-text match occurred, allowing clients to deep-link the user to the match (e.g. a PDF page or an ELAN annotation's time range). Segments are optional — absent or empty for hits without structured content. They are ranked by relevance and capped at an implementation-defined limit advertised as `maxSegments` in `/capabilities`.
+                Locations inside the file where the full-text match occurred, allowing clients to deep-link the user to the match (e.g. a PDF page or an ELAN annotation's time range). Segments are optional — absent or empty for hits without structured content. They are ranked by relevance and capped at an implementation-defined limit.
     ValidationError:
       type: object
       required:
@@ -1583,12 +1645,21 @@ components:
       value:
         apiVersion: "0.1.0"
         extensions:
-          segments:
-            maxSegments: 5
-        facets:
-          inLanguage:
-            label: "Language"
-          mediaType: {}
+          segments: {}
+        search:
+          filters:
+            inLanguage:
+              type: "string"
+              label: "Language"
+            mediaType:
+              type: "string"
+            createdAt:
+              type: "date"
+              label: "Date created"
+          facets:
+            inLanguage:
+              label: "Language"
+            mediaType: {}
 
     EntityResponse:
       summary: Example entity response
@@ -1689,6 +1760,9 @@ components:
             - "English"
           mediaType:
             - "audio/mpeg"
+          createdAt:
+            gte: "2020-01-01"
+            lte: "2021-01-01"
         boundingBox:
           topRight:
             lat: -33.7
@@ -1753,7 +1827,7 @@ components:
                   page: 3
                   highlight:
                     - "a wordlist of <em>West Alor</em> terms for kinship"
-                - type: "annotation"
+                - type: "time-aligned-annotation"
                   tier: "A_phrase-segnum-en"
                   startMs: 83000
                   endMs: 87500

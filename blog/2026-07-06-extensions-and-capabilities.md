@@ -41,14 +41,26 @@ endpoint:
 ```json
 {
   "apiVersion": "0.1.0",
-  "extensions": { "segments": { "maxSegments": 5 } },
-  "facets": { "inLanguage": { "label": "Language" }, "mediaType": {} }
+  "extensions": { "segments": {} },
+  "search": {
+    "filters": {
+      "inLanguage": { "type": "string", "label": "Language" },
+      "createdAt": { "type": "date", "label": "Date created" }
+    },
+    "facets": { "inLanguage": { "label": "Language" }, "mediaType": {} }
+  }
 }
 ```
 
 Detection is a key lookup: an archive supports an extension exactly when its
-identifier appears in `extensions`. The `facets` map lets portals build facet
-UI dynamically instead of hard-coding per-archive facet lists.
+identifier appears in `extensions`. The `search` object lets portals build
+their search UI dynamically instead of hard-coding per-archive field lists:
+`filters` declares the fields a search request may filter on, each with a
+type (`string`, `date`, `number`, or `boolean`) that tells the portal which
+UI element to render — and `date` and `number` filters accept inclusive
+`gte`/`lte` range objects in search requests. `facets` declares the fields
+returned with facet counts, and every facet field is guaranteed to also be
+filterable, so clicking a facet value always works as a filter.
 
 This is the one conformance-affecting change in 0.1.0: existing
 implementations need to add the endpoint.
@@ -69,8 +81,9 @@ the union grows.
 
 ## Where to go next
 
-- The [Extensions guide](/docs/getting-started/extensions) explains the
-  extension model, the registry, and the client rules.
+- The [Extensions guide](/docs/extensions) explains the extension model, the
+  registry, and the client rules; the [segments page](/docs/extensions/segments)
+  covers the first extension in depth, including implementation notes.
 - The [API reference](/docs/api) documents `/capabilities` and the segment
   schemas.
 - The specification now has a

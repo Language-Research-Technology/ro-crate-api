@@ -15,8 +15,18 @@ it instead of relying on per-archive configuration or probing responses.
 ```json
 {
   "apiVersion": "0.1.0",
-  "extensions": { "segments": { "maxSegments": 5 } },
-  "facets": { "inLanguage": { "label": "Language" }, "mediaType": {} }
+  "extensions": { "segments": {} },
+  "search": {
+    "filters": {
+      "inLanguage": { "type": "string", "label": "Language" },
+      "mediaType": { "type": "string" },
+      "createdAt": { "type": "date", "label": "Date created" }
+    },
+    "facets": {
+      "inLanguage": { "label": "Language" },
+      "mediaType": {}
+    }
+  }
 }
 ```
 
@@ -33,22 +43,48 @@ records what changed in each version.
 ### `extensions`
 
 The registered extensions the implementation provides, as a map of extension
-identifier to that extension's configuration object. Presence of a key means
-the extension is implemented; the value is an empty object when the extension
-has nothing to configure.
+identifier to a details object describing how that extension is provided.
+Presence of a key means the extension is implemented; the value is an empty
+object when the extension has no extra details to communicate.
 
 Detection is a simple key lookup: an archive supports segments exactly when
 `"segments" in capabilities.extensions`. See the
-[Extensions guide](./extensions) for the extension model and the rules clients
-must follow.
+[Extensions guide](/docs/extensions) for the extension model and the rules
+clients must follow.
 
-### `facets`
+### `search.filters`
+
+The fields that may be used in the search request's `filters` object, as a map
+of field name to its declaration. Each filter declares a required `type` —
+`string`, `date`, `number`, or `boolean` — and an optional display `label`.
+
+The type tells you which UI element suits the field (a date picker for `date`,
+a toggle for `boolean`) and which request syntax it accepts: every filter
+accepts an array of exact values, and `date` and `number` filters additionally
+accept an inclusive range object:
+
+```json
+{
+  "filters": {
+    "inLanguage": ["English"],
+    "createdAt": { "gte": "2020-01-01", "lte": "2021-01-01" }
+  }
+}
+```
+
+Requests using a filter field the implementation did not declare — or sending
+a range to a `string` or `boolean` filter — are rejected with a 400
+`ValidationError`, so build filter UI from this map rather than hard-coding
+field lists. Hide filters whose `type` you do not recognise; new types are
+added by spec revision.
+
+### `search.facets`
 
 The facet fields the implementation supports in search, as a map of field name
-to configuration with an optional display `label`. Use it to build facet UI
-dynamically instead of hard-coding per-archive facet lists: each field listed
-here may be used in search `filters` and appears in the search response's
-facet counts.
+to its declaration, with an optional display `label`. Each field listed here
+appears in the search response's facet counts, and is guaranteed to also be
+declared in `search.filters` — so a facet value the user clicks can always be
+applied as a filter on the next request.
 
 ## Using Capabilities
 
