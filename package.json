@@ -19,24 +19,24 @@
     "lint": "pnpm lint:types && pnpm lint:format && pnpm lint:openapi"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.10.1",
-    "@docusaurus/faster": "^3.10.1",
-    "@docusaurus/preset-classic": "^3.10.1",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/faster": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
-    "docusaurus-plugin-openapi-docs": "^5.1.0",
-    "docusaurus-theme-openapi-docs": "^5.1.0",
+    "docusaurus-plugin-openapi-docs": "^5.1.2",
+    "docusaurus-theme-openapi-docs": "^5.1.2",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.2",
-    "@docusaurus/module-type-aliases": "^3.10.1",
-    "@docusaurus/theme-common": "^3.10.1",
-    "@docusaurus/tsconfig": "^3.10.1",
-    "@docusaurus/types": "^3.10.1",
-    "@redocly/cli": "^2.37.0",
+    "@biomejs/biome": "^2.5.4",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/theme-common": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
+    "@redocly/cli": "^2.39.0",
     "typescript": "~5.9.3"
   },
   "browserslist": {
@@ -54,5 +54,5 @@
   "engines": {
     "node": ">=18.0"
   },
-  "packageManager": "pnpm@11.10.0+sha512.0b7f8b98060031904c017e3a41eb187a16d40eeb829b95c4f8cb03681761fc4ab53dd219115b9b447f4dce1a05a214764461e7d3703392a9f32f9511ce8c86c8"
+  "packageManager": "pnpm@11.15.0"
 }
