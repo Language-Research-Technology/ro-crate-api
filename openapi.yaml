@@ -33,7 +33,7 @@ info:
   license:
     name: MIT
     identifier: MIT
-  version: 0.1.0
+  version: 0.2.0
 servers:
   - url: https://data.ldaca.edu.au/api
     description: LDaCA
@@ -407,13 +407,17 @@ paths:
                   description: |
                     A set of key-value pairs representing additional filters. Keys MUST be filter fields the implementation declares in `/capabilities` under `search.filters`; a request using an undeclared key MUST be rejected with a 400 `ValidationError`.
 
-                    Each value is either an array of acceptable values (matched as exact terms, valid for any filter type) or a range object with inclusive `gte`/`lte` bounds (valid only for filters declared with type `date` or `number`). A range sent to a `string` or `boolean` filter MUST be rejected with a 400 `ValidationError`.
+                    Each value is either an array of acceptable values (matched as exact terms, valid for any filter type), a single range object with inclusive `gte`/`lte` bounds, or a non-empty array of range objects matched as an OR of the ranges — an entity matches when any of the ranges matches. Ranges, single or in an array, are valid only for filters declared with type `date` or `number`; a range sent to a `string` or `boolean` filter MUST be rejected with a 400 `ValidationError`. An array MUST NOT mix exact terms and range objects; such a request MUST be rejected with a 400 `ValidationError`.
                   additionalProperties:
                     oneOf:
                       - type: array
                         items:
                           type: string
                       - $ref: "#/components/schemas/FilterRange"
+                      - type: array
+                        minItems: 1
+                        items:
+                          $ref: "#/components/schemas/FilterRange"
                   example:
                     {
                       "inLanguage": ["English", "Japanese"],
@@ -1073,7 +1077,7 @@ components:
         apiVersion:
           type: string
           description: The version of this specification that the implementation targets.
-          example: "0.1.0"
+          example: "0.2.0"
         extensions:
           type: object
           description: |
@@ -1138,7 +1142,7 @@ components:
     FilterCapability:
       type: object
       description: |
-        Describes a search filter field the implementation supports. The `type` tells clients which UI element suits the field (e.g. a date picker for `date`, a toggle for `boolean`) and which request syntax the field accepts: `date` and `number` filters accept a range object as well as an array of values; `string` and `boolean` filters accept an array of values only.
+        Describes a search filter field the implementation supports. The `type` tells clients which UI element suits the field (e.g. a date picker for `date`, a toggle for `boolean`) and which request syntax the field accepts: `date` and `number` filters accept a single range object or a non-empty array of range objects (matched as an OR of the ranges) as well as an array of values; `string` and `boolean` filters accept an array of values only.
 
         New filter types are added by revision of this specification; clients MUST hide filters with a `type` value they do not recognise rather than fail.
       required:
@@ -1159,7 +1163,7 @@ components:
           example: Date created
     FilterRange:
       type: object
-      description: An inclusive range constraint for a search filter. Valid only for filters declared with type `date` or `number` in `/capabilities`. At least one bound is required; values are ISO 8601 strings for `date` filters and numbers for `number` filters.
+      description: An inclusive range constraint for a search filter. Valid only for filters declared with type `date` or `number` in `/capabilities`. At least one bound is required; values are ISO 8601 strings for `date` filters and numbers for `number` filters. A filter value may be a single range or a non-empty array of ranges; an array is matched as an OR of its ranges — an entity matches when any of the ranges matches.
       minProperties: 1
       additionalProperties: false
       properties:
@@ -1643,7 +1647,7 @@ components:
     CapabilitiesResponse:
       summary: Example capabilities response
       value:
-        apiVersion: "0.1.0"
+        apiVersion: "0.2.0"
         extensions:
           segments: {}
         search:
@@ -1761,8 +1765,10 @@ components:
           mediaType:
             - "audio/mpeg"
           createdAt:
-            gte: "2020-01-01"
-            lte: "2021-01-01"
+            - gte: "1965-01-01"
+              lte: "1965-12-31"
+            - gte: "1972-01-01"
+              lte: "1972-12-31"
         boundingBox:
           topRight:
             lat: -33.7

@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the specification adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-07-20
+
+### Added
+
+- A `date` or `number` search filter value may now also be a non-empty array
+  of `gte`/`lte` range objects, matched as an OR of the ranges — an entity
+  matches when any of the ranges matches. This lets a client express several
+  disjoint periods on one filter, such as a date facet where the user selects
+  multiple years. Arrays mixing exact terms and range objects are rejected
+  with a 400 `ValidationError`, as is any range syntax on a `string` or
+  `boolean` filter.
+
 ## [0.1.0] - 2026-07-13
 
 ### Added

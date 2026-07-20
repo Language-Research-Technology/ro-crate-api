@@ -14,7 +14,7 @@ it instead of relying on per-archive configuration or probing responses.
 
 ```json
 {
-  "apiVersion": "0.1.0",
+  "apiVersion": "0.2.0",
   "extensions": { "segments": {} },
   "search": {
     "filters": {
@@ -72,11 +72,27 @@ accept an inclusive range object:
 }
 ```
 
+A `date` or `number` filter also accepts a non-empty array of range objects,
+matched as an OR of the ranges — an entity matches when any of the ranges
+matches. This is how a UI lets the user select several disjoint periods, such
+as two years in a date facet:
+
+```json
+{
+  "filters": {
+    "createdAt": [
+      { "gte": "1965-01-01", "lte": "1965-12-31" },
+      { "gte": "1972-01-01", "lte": "1972-12-31" }
+    ]
+  }
+}
+```
+
 Requests using a filter field the implementation did not declare — or sending
-a range to a `string` or `boolean` filter — are rejected with a 400
-`ValidationError`, so build filter UI from this map rather than hard-coding
-field lists. Hide filters whose `type` you do not recognise; new types are
-added by spec revision.
+a range to a `string` or `boolean` filter, or mixing exact values and range
+objects in one array — are rejected with a 400 `ValidationError`, so build
+filter UI from this map rather than hard-coding field lists. Hide filters
+whose `type` you do not recognise; new types are added by spec revision.
 
 ### `search.facets`
 
