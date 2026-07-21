@@ -43,6 +43,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          // Docusaurus defaults plus agent config and ADRs, which are not site content
+          exclude: ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**', 'agents/**', 'adr/**'],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/language-research-technology/ro-crate-api/tree/main',
