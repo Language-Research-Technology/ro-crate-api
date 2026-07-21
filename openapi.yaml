@@ -83,7 +83,6 @@ paths:
         - capabilities
       summary: Get implementation capabilities
       description: |
-        ### Capabilities
         Declare what this implementation supports — the spec version it targets, the extensions it implements, and the search filters and facets it provides. Every conformant implementation MUST provide this endpoint so that clients can feature-detect rather than relying on per-archive configuration or probing.
 
         See the [Capabilities guide](https://language-research-technology.github.io/ro-crate-api/docs/getting-started/capabilities) for how clients should use this endpoint, and the [Extensions guide](https://language-research-technology.github.io/ro-crate-api/docs/extensions) for how extensions are registered.
@@ -113,7 +112,6 @@ paths:
         - entities
       summary: List entities
       description: |
-        ### Entity
         Retrieve and list the entities in a collection. This endpoint returns key metadata describing each entity (e.g., ID, name, description). The response can be filtered, paginated, and sorted, allowing clients to navigate large archives efficiently.
       operationId: listEntities
       parameters:
@@ -182,7 +180,6 @@ paths:
         - entities
       summary: Get an entity
       description: |
-        ### Entity
         Retrieve an entity in a collection. This endpoint returns key metadata describing each entity (e.g., ID, name, description).
       operationId: getEntity
       parameters:
@@ -236,7 +233,6 @@ paths:
         - entities
       summary: Get RO-Crate metadata
       description: |
-        ### RO-Crate Metadata
         Retrieve the complete RO-Crate JSON-LD metadata for an entity. This returns the raw RO-Crate representation, which includes all metadata conforming to the RO-Crate specification.
 
         This endpoint works for any entity type (Collection, Object, or MediaObject) and returns the associated ro-crate-metadata.json content.
@@ -311,7 +307,6 @@ paths:
         - entities
       summary: Get RO-Crate metadata headers
       description: |
-        ### RO-Crate Metadata Headers
         Retrieve RO-Crate metadata headers without downloading the metadata content. Returns the same headers as GET but with no response body, useful for checking metadata availability and caching information.
       operationId: headEntityCrate
       parameters:
@@ -369,7 +364,6 @@ paths:
         - search
       summary: Search for RO-Crate entities
       description: |
-        ### Search
         Perform advanced or basic searches across the entire RO-Crate collection. This includes free text queries, as well as filters for specific fields such as `inLanguage` or `mediaType`. The search results can be paginated, sorted, and optionally returned alongside facet counts.
       operationId: search-entities
       requestBody:
@@ -607,7 +601,6 @@ paths:
         - files
       summary: List files
       description: |
-        ### Files
         Retrieve and list file in the repository. This endpoint returns key metadata describing each file. The response can be filtered by memberOf to show files attached to a specific entity, and supports pagination and sorting.
       operationId: listFiles
       parameters:
@@ -668,7 +661,6 @@ paths:
         - files
       summary: Get file content
       description: |
-        ### File Access
         Retrieve a file. The file can be returned inline (e.g., displayed in the browser) or as an attachment for download (e.g., prompting a save dialog), based on the disposition parameter.
         The API can serve the file directly or redirect to the location of the file.
       operationId: getFile
@@ -805,7 +797,6 @@ paths:
         - files
       summary: Get file metadata headers
       description: |
-        ### File Metadata Headers
         Retrieve file metadata headers without downloading the file content. Returns the same headers as GET but with no response body, useful for checking file availability, size, type, and caching information.
       operationId: headFile
       parameters:
